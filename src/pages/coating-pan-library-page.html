@@ -1,0 +1,212 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../elements/number-unit-input.html">
+<link rel="import" href="../mixins/redux-mixin.html">
+<link rel="import" href="../my-icons.html">
+
+<dom-module id="coating-pan-library-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 2000px;
+      }
+      
+      #header {
+        display: flex;
+        padding: 96px 0px 36px 0px;
+        background: linear-gradient(to bottom, var(--app-primary-color) 0%,var(--app-primary-color) 50%,#000000 50%,var(--app-background-color) 50%,var(--app-background-color) 100%);
+      }
+      
+      .card {
+        @apply --shadow-elevation-2dp;
+        flex-grow: 1;
+        border-radius: 4px;
+        background-color: white;
+        padding: 16px;
+        max-width: 960px;
+      }
+      #header .card {
+        flex-grow: 1;
+        align-self: center;
+        margin: 0px auto;
+      }
+      .header-subhead {
+        @apply --paper-font-body2;
+        padding: 0px 16px;
+        text-transform: uppercase;
+        color: var(--app-primary-color);
+      }
+      .header-title {
+        @apply --paper-font-display2;
+        padding: 12px 16px;
+      }
+      .header-text {
+        @apply --paper-font-subhead;
+        padding: 12px 16px 24px 16px;
+        color: var(--text-secondary-color);
+        text-align: justify;
+        max-width: 600px;
+      }
+      .card-table {
+        @apply --shadow-elevation-2dp;
+        flex-grow: 1;
+        border-radius: 4px;
+        background-color: white;
+        max-width: calc(960px + 16px + 16px);
+        margin: 0px auto;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .column {
+        flex-grow: 1;
+      }
+      .column-header {
+        @apply --paper-font-body2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 48px;
+        border-bottom: 1px solid lightgray;
+      }
+      th, 
+      td {
+        padding: 0px 24px;
+      }
+      th {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 24px;
+        color: var(--text-secondary-color);
+        height: 64px;
+      }
+      td {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        color: var(--text-primary-color);
+        height: 48px;
+      }
+      
+      tr + tr td {
+        border-top: 1px solid #bdbdbd;
+      }
+      th {
+        border-bottom: 1px solid #bdbdbd;
+      }
+      
+      .text {
+        text-align: start;
+      }
+      
+      .numeric {
+        text-align: end;
+      }
+      
+      tbody tr:hover {
+        background-color: var(--app-background-color);
+      }
+      .icon {
+        width: 40px;
+        color: var(--text-secondary-color);
+      }
+    </style>
+    
+    <firebase-auth id="auth" user="{{user}}"></firebase-auth>
+    <firebase-query path='/pans' data='{{pans}}'></firebase-query>
+    
+    
+    <div id='header'>
+      <div class='card'>
+        <div class='header-subhead'>Library</div>
+        <div class='header-title'>Coating Pan</div>
+        <div class='header-text'>
+          The coating pan dashboard provies insight into the coating pan you are using. 
+        	With a few measurements of the coating pan you can learn more about different pan volumes, pan fill and pan speeds.
+        	Or you can choose a coating pan from the library.
+        </div>
+      </div>
+    </div>
+    
+    <div class='card-table'>
+      <table class='table'>
+        <thead>
+          <tr>
+            <th class='text'>Equipment Name</th>
+            <th class='text'>Nickname</th>
+            <th class='text'>Company</th>
+            <th class='numeric'>Diameter (in)</th>
+            <th class='numeric'>Volume (L)</th>
+            <th class='icon'></th>
+          </tr>
+        </thead>
+        <tbody>
+          <template is='dom-repeat' items='[[pans]]'>
+            <tr>
+              <td class='text'>[[item.vendorName]] [[item.equipmentName]]</td>
+              <td class='text'>[[item.nickname]]</td>
+              <td class='text'>[[item.companyName]] [[item.locationName]]</td>
+              <td class='numeric'>[[_converToInches(item.panDiameter)]]</td>
+              <td class='numeric'>[[_convertToLiters(item.calculatedMinFillVolume)]] - [[_convertToLiters(item.calculatedMaxFillVolume)]]</td>
+              <td class='icon'><paper-icon-button icon='my-icons:load' on-tap='_loadPan'></paper-icon-button></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    
+  </template>
+
+  <script>
+    class CoatingPanLibraryPage extends ReduxMixin(Polymer.Element) {
+      
+      static get is() { return 'coating-pan-library-page'; }
+      
+      static get properties() {
+        return {
+          pans: {
+            type: Object
+          }
+        };
+      }
+      
+      _convertToLiters(val) {
+        return (val / 0.001 ).toFixed(1);
+      }
+      
+      _converToInches(val) {
+        return (val * 39.37).toFixed(1);
+      }
+      
+      _loadPan(e) {
+        this.dispatch({
+          type: 'LOAD_PAN',
+          value: e.model.item
+        });
+        window.location = '#/coating-pan';
+      }
+      
+      
+    }
+
+    window.customElements.define(CoatingPanLibraryPage.is, CoatingPanLibraryPage);
+  </script>
+</dom-module>

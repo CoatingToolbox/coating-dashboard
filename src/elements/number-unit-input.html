@@ -21,7 +21,7 @@
         }
         
         :host(.iron-selected) #title{
-          color: var(--primary-color);
+          color: var(--app-primary-color);
         }
         
         :host([hidden]) {
@@ -61,9 +61,9 @@
         }
         
         #input:focus {
-          color: var(--primary-color);
+          color: var(--app-primary-color);
           border-bottom: 1px solid;
-          border-color: var(--primary-color);
+          border-color: var(--app-primary-color);
         }
         
         #input[type=number]::-webkit-inner-spin-button,
@@ -93,14 +93,14 @@
         
         .item {
           @apply(--paper-font-body1);
-          color: var(--text-color);
+          color: var(--text-primary-color);
           padding: 8px 16px;
           height: 36px;
           width: 100%;
         }
         
         .item.iron-selected {
-          color: var(--primary-color);
+          color: var(--app-primary-color);
         }
         
         .dropdown-trigger {

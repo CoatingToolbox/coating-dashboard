@@ -25,7 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
       :host {
         display: block;
-        height: 2000px;
+        margin-bottom: 48px;
       }
       #header {
         display: flex;
@@ -34,7 +34,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       
       .card {
-        @apply(--shadow-elevation-2dp);
+        @apply --shadow-elevation-2dp;
         flex-grow: 1;
         border-radius: 4px;
         background-color: white;
@@ -47,18 +47,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin: 0px auto;
       }
       .header-subhead {
-        @apply(--paper-font-body2);
+        @apply --paper-font-body2;
         padding: 0px 16px;
         text-transform: uppercase;
         color: var(--app-primary-color);
       }
       .header-title {
-        @apply(--paper-font-display2);
-        padding: 16px 16px;
+        @apply --paper-font-display2;
+        padding: 12px 16px;
       }
       .header-text {
-        @apply(--paper-font-subhead);
-        padding: 0px 16px;
+        @apply --paper-font-subhead;
+        padding: 12px 16px 24px 16px;
         color: var(--text-secondary-color);
         text-align: justify;
         max-width: 600px;
@@ -74,7 +74,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       .warning-text {
         flex-grow: 1;
-        @apply(--paper-font-subhead);
+        @apply --paper-font-subhead;
       }
       .save-button {
         background-color: var(--app-primary-color);
@@ -95,15 +95,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .right-cards {
         width: 35%;
       }
-      .highlight {
+      .library-card {
+        display: flex;
+        flex-direction: column;
         color: white;
         background-color: var(--app-primary-color);
       }
       .card-title {
-        @apply(--paper-font-title);
+        @apply --paper-font-title;
       }
       .card-text {
-        @apply(--paper-font-body2);
+        @apply --paper-font-body2;
         margin: 12px 0px;
         text-align: justify;
       }
@@ -126,6 +128,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .input-card-container {
         display: flex;
       }
+      .library-button {
+        @apply --paper-font-button;
+        align-self: flex-end;
+        color: var(--app-primary-color);
+        background-color: white;
+      }
       
       [hidden] {
         display: none;
@@ -136,8 +144,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <firebase-auth id="auth" user="{{user}}"></firebase-auth>
     <firebase-query
       id='panQuery'
-      path='/pans'
-      data='{{pans}}'>
+      path='/pans'>
     </firebase-query>
     
     
@@ -225,7 +232,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
         
         <div class='card'>
-            <div class='card-title'>Calculations</div>
+            <div class='card-title'>Estimated Volumes</div>
             <number-unit-input
               title='Bim Volume'
               details='The capacity of the pan to the brim'
@@ -256,11 +263,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </div>
       </div>
       <div class='right-cards'>
-        <div class='card highlight'>
-          <div class='card-title'>Library</div>
+        <div class='card library-card'>
+          <div class='card-title'>Coating Pan Library</div>
           <div class='card-text'>The library includes a list of coating pans with predefined measurements. The library is based on coating pans found 
-          at different Colocon sites and coating pan vendor specfications. Choose one today to get started.</div>
+          at different Colocon sites and coating pan vendor specfications. Choose one today to get started.
+          </div>
+          <paper-button class='library-button' raised on-tap='_gotoLibrary'>Library</paper-button>
         </div>
+        
         <div class='card'>
           <div class='card-title'>Information</div>
           <text-input title='Vendor' value='[[vendorName]]' on-value-changed='_vendorNameChanged'></text-input>
@@ -350,6 +360,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           calculatedMinFillVolume: this._minFillVolume
           
         });
+      }
+      
+      _gotoLibrary() {
+        window.location = '#/coating-pan-library';
       }
       
     }

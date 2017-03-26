@@ -82,7 +82,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </firebase-app>
     <firebase-auth id="auth" user="{{user}}" on-error='_authError'></firebase-auth>
 
-    <app-location route="{{route}}"></app-location>
+    <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route
         route="{{route}}"
         pattern="/:page"
@@ -94,7 +94,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="drawer" slot="drawer">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="coating-pan" href="/coating-page">Coating Pan</a>
+          <a name="coating-pan" href="#/coating-pan">Coating Pan</a>
         </iron-selector>
       </app-drawer>
 
@@ -114,6 +114,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             fallback-selection="coating-pan"
             role="main">
           <coating-pan-page name='coating-pan'></coating-pan-page>
+          <coating-pan-library-page name='coating-pan-library'></coating-pan-library-page>
         </iron-pages>
         
       </app-header-layout>

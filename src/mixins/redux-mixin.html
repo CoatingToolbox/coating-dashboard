@@ -9,7 +9,12 @@
       openingDiameter: 0.4826,
       wallWidth: 0.508,
       brimWidth: 0.93345, 
-      fillVolume: 0.158
+      fillVolume: 0.158,
+      locationName: '',
+      companyName: '',
+      equipmentName: 'Fastcoat 48"',
+      vendorName: "O'Hara",
+      nickname: ''
     }
   };
   
@@ -63,7 +68,15 @@
         break;
         
       case 'LOAD_PAN':
-        pan = Object.assign(pan, action.pan);
+        pan.panDiameter = action.value.panDiameter;
+        pan.openingDiameter = action.value.openingDiameter;
+        pan.wallWidth = action.value.wallWidth;
+        pan.brimWidth = action.value.brimWidth;
+        pan.vendorName = action.value.vendorName;
+        pan.companyName = action.value.companyName;
+        pan.locationName = action.value.locationName;
+        pan.nickname = action.value.nickname;
+        pan.equipmentName = action.value.equipmentName;
         break;
       
       default: 
