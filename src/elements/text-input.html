@@ -1,0 +1,80 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="text-input">
+
+  <template>
+        
+    <style>
+        
+       :host {
+          display: block;
+          color: var(--text-primary-color);
+          font-size: 18px;
+          padding: 4px 0px;
+          border-radius: 4px;
+      		opacity: 1;
+      		transition: opacity 0.2s;
+      		color: inherit;
+        }
+        
+        #title {
+          @apply(--paper-font-body1);
+          color: var(--secondary-text-color);
+        }
+        
+        #input {
+          @apply(--paper-font-body2);
+          color: var(--text-color);
+          font-family: inherit;
+          height: 36px;
+          width: calc(100% - 16px - 16px - 2px - 2px);
+          max-width: 425px;
+          padding: 0px 16px;
+          margin: 6px 0px;
+          border-radius: 4px;
+          border: 2px solid var(--app-background-color);
+        }
+        
+        #input:focus {
+          outline-color: var(--app-primary-color);
+        }
+        
+        @media(min-width: 480px) {
+          :host {
+            padding: 4px 16px;
+          }
+        }
+        
+    </style>
+    
+		<div id='title'>[[title]]</div>
+		
+		<input id='input' value='[[value]]' on-change='_valueChanged'>
+			
+  </template>
+
+  <script>
+  
+    class TextInput extends Polymer.Element {
+      static get is() { return 'text-input';}
+      static get properties() {
+        return {
+          title: {
+            type: String
+          },
+          value: {
+            type: String
+          }
+        };
+      }
+      _valueChanged(e) {
+        this.dispatchEvent(new CustomEvent('value-changed', {detail: {value: this.$.input.value, title: this.title}}));
+      }
+    }
+    
+    window.customElements.define(TextInput.is, TextInput);
+    
+  </script>
+
+</dom-module>

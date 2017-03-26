@@ -1,0 +1,85 @@
+
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer-redux/polymer-redux.html">
+<script>
+  // Setup a Redux store
+  const initialState = {
+    pan: {
+      panDiameter: 1.2192,
+      openingDiameter: 0.4826,
+      wallWidth: 0.508,
+      brimWidth: 0.93345, 
+      fillVolume: 0.158
+    }
+  };
+  
+  const panReducer = (state, action) => {
+    if(!state) {return initialState;}
+    let pan = state;
+    switch(action.type) {
+    
+      case 'SET_PAN_DIAMETER':
+        pan.panDiameter = action.value;
+        break;
+      
+      case 'SET_PAN_OPENING_DIAMETER':
+        pan.openingDiameter = action.value;
+        break;
+        
+      case 'SET_PAN_BRIM_WIDTH':
+        pan.brimWidth = action.value;
+        break;
+        
+      case 'SET_PAN_WALL_WIDTH':
+        pan.wallWidth = action.value;
+        break;  
+        
+      case 'SET_PAN_VENDOR_NAME':
+        pan.vendorName = action.value;
+        break;
+      
+      case 'SET_PAN_NICKNAME':
+        pan.nickname = action.value;
+        break;
+        
+      case 'SET_PAN_EQUIPMENT_NAME':
+        pan.equipmentName = action.value;
+        break;  
+        
+      case 'SET_PAN_COMPANY_NAME':
+        pan.companyName = action.value;
+        break;  
+        
+      case 'SET_PAN_LOCATION_NAME':
+        pan.locationName = action.value;
+        break;  
+        
+      case 'SET_PAN_DESCRIPTION':
+        pan.description = action.value;
+        break;  
+        
+      case 'SET_BATCH_VOLUME':
+        pan.fillVolume = action.value;
+        break;
+        
+      case 'LOAD_PAN':
+        pan = Object.assign(pan, action.pan);
+        break;
+      
+      default: 
+        return state;
+    }
+    return Object.assign({}, pan);
+  };
+  
+  const reducer = (state = initialState, action) => {
+    return {
+      pan: panReducer(state.pan, action)
+    };
+  };
+  
+  const store = Redux.createStore(reducer);
+  
+  // Create the Polymer mixin
+  ReduxMixin = PolymerRedux(store);
+</script>

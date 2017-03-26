@@ -1,0 +1,359 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../mixins/coating-pan-mixin.html">
+<link rel="import" href="../elements/text-input.html">
+<link rel="import" href="../elements/number-unit-input.html">
+<link rel="import" href="../my-icons.html">
+
+<dom-module id="coating-pan-page">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 2000px;
+      }
+      #header {
+        display: flex;
+        padding: 96px 0px 36px 0px;
+        background: linear-gradient(to bottom, var(--app-primary-color) 0%,var(--app-primary-color) 50%,#000000 50%,var(--app-background-color) 50%,var(--app-background-color) 100%);
+      }
+      
+      .card {
+        @apply(--shadow-elevation-2dp);
+        flex-grow: 1;
+        border-radius: 4px;
+        background-color: white;
+        padding: 16px;
+        max-width: 960px;
+      }
+      #header .card {
+        flex-grow: 1;
+        align-self: center;
+        margin: 0px auto;
+      }
+      .header-subhead {
+        @apply(--paper-font-body2);
+        padding: 0px 16px;
+        text-transform: uppercase;
+        color: var(--app-primary-color);
+      }
+      .header-title {
+        @apply(--paper-font-display2);
+        padding: 16px 16px;
+      }
+      .header-text {
+        @apply(--paper-font-subhead);
+        padding: 0px 16px;
+        color: var(--text-secondary-color);
+        text-align: justify;
+        max-width: 600px;
+      }
+      .warning {
+        display: flex;
+        align-items: center;
+        margin: 0px auto 36px auto;
+      }
+      .warning iron-icon {
+        color: var(--app-warning-color);
+        margin-right: 16px;
+      }
+      .warning-text {
+        flex-grow: 1;
+        @apply(--paper-font-subhead);
+      }
+      .save-button {
+        background-color: var(--app-primary-color);
+        color: white;
+      }
+      .card-container {
+        display: flex;
+        max-width: calc(960px + 16px + 16px + 8px + 8px);
+        margin: 0px auto;
+      }
+      .left-cards {
+        width: 65%;
+      }
+      .left-cards .card,
+      .right-cards .card {
+        margin: 16px 8px;
+      }
+      .right-cards {
+        width: 35%;
+      }
+      .highlight {
+        color: white;
+        background-color: var(--app-primary-color);
+      }
+      .card-title {
+        @apply(--paper-font-title);
+      }
+      .card-text {
+        @apply(--paper-font-body2);
+        margin: 12px 0px;
+        text-align: justify;
+      }
+      .graphic-container {
+        display: flex;
+        justify-content: space-around;
+      }
+      .pan-graphic {
+        height: 256px;
+        width: 256px;
+        fill: var(--text-secondary-color);
+        fill-opacity: 0.4;
+        stroke: var(--text-primary-color);
+        stroke-width: 0.25px;
+        stroke-linejoin: round;
+      }
+      .pan-fill {
+        fill: var(--app-primary-color);
+      }
+      .input-card-container {
+        display: flex;
+      }
+      
+      [hidden] {
+        display: none;
+      }
+      
+    </style>
+    
+    <firebase-auth id="auth" user="{{user}}"></firebase-auth>
+    <firebase-query
+      id='panQuery'
+      path='/pans'
+      data='{{pans}}'>
+    </firebase-query>
+    
+    
+    <div id='header'>
+      <div class='card header'>
+        <div class='header-subhead'>Equipment</div>
+        <div class='header-title'>Coating Pan</div>
+        <div class='header-text'>
+          The coating pan dashboard provies insight into the coating pan you are using. 
+        	With a few measurements of the coating pan you can learn more about different pan volumes, pan fill and pan speeds.
+        	Or you can choose a coating pan from the library.
+        </div>
+      </div>
+    </div>
+    
+    <div class='card warning' hidden='[[!_isOverfilled(_maxFillVolume, fillVolume)]]'>
+      <iron-icon icon='my-icons:warning'></iron-icon>
+      <div class='warning-text'>
+        Batch Volume exceed maximum working volume. Considering lower batch size or choosing a bigger coating pan.
+      </div>
+    </div>
+    
+    <div class='card warning'>
+      <iron-icon icon='my-icons:warning'></iron-icon>
+      <div class='warning-text'>
+        Looks like you are creating a custom coating pan. Save it to reference it again later.
+      </div>
+      <paper-button class='save-button' raised on-tap='_saveCoatingPan'>Save</paper-button>
+    </div>
+    
+    <div class='card-container'>
+      <div class='left-cards'>
+        <div class='card'>
+          <div class='card-title'>Coating Pan Outline</div>
+          <div class='graphic-container'>
+            
+            <svg class='pan-graphic' viewbox='0 0 24 24'>
+              <path d$='[[_pathFrontPanDiameter]]'></path>
+              <path class='pan-fill' d$='[[_pathFrontFill]]'></path>
+              <path d$='[[_pathFrontOpeningDiameter]]'></path>
+            </svg>
+            
+            <svg class='pan-graphic' viewbox='0 0 24 24'>
+              <path d$='[[_pathSidePan]]'></path>
+              <path class='pan-fill' d$='[[_pathSideFill]]'></path>
+            </svg>
+            
+          </div>
+        </div>
+          
+        <div class='card'>
+          <div class='card-title'>Inputs</div>
+          <number-unit-input 
+    	    	title='Main Diameter' 
+    	    	value='[[panDiameter]]' 
+    	    	type='length'
+    	    	selected-units='{{lengthUnits}}'
+    	    	details='The main diameter of the coating pan'
+    	    	on-value-changed='_panDiameterChanged'>
+    	    </number-unit-input>
+    	    <number-unit-input 
+    	    	title='Opening' 
+    	    	value='[[openingDiameter]]' 
+    	    	type='length'
+    	    	details='The diameter of the pan opening'
+    	    	selected-units='{{lengthUnits}}'
+    	    	on-value-changed='_openingDiameterChanged'>
+    	    </number-unit-input>
+    	    <number-unit-input 
+    	    	title='Depth at Brim' 
+    	    	value='[[brimWidth]]' 
+    	    	type='length'
+    	    	selected-units='{{lengthUnits}}'
+    	    	details='The depth from the front brim to the back'
+    	    	on-value-changed='_brimWidthChanged'>
+    	    </number-unit-input>
+    	    <number-unit-input 
+    	    	title='Pan Wall Depth' 
+    	    	value='[[wallWidth]]' 
+    	    	type='length'
+    	    	details='The depth of the coating pan along the perforated pan wall'
+    	    	selected-units='{{lengthUnits}}'
+    	    	on-value-changed='_wallWidthChanged'>
+    	    </number-unit-input>
+        </div>
+        
+        <div class='card'>
+            <div class='card-title'>Calculations</div>
+            <number-unit-input
+              title='Bim Volume'
+              details='The capacity of the pan to the brim'
+              no-input 
+              decimals='1' 
+              value='[[_brimVolume]]' 
+              type='volume' 
+              selected-units='{{volumeUnits}}'>
+            </number-unit-input>
+            <number-unit-input
+              title='Max Working Volume'
+              details='The capacity of the pan upto 1" from the brim'
+              no-input 
+              decimals='1' 
+              value='[[_maxFillVolume]]' 
+              type='volume' 
+              selected-units='{{volumeUnits}}'>
+            </number-unit-input>
+            <number-unit-input
+              title='Min Working Volume'
+              details='The capacity of the pan to be 60% full of brim height'
+              no-input 
+              decimals='1' 
+              value='[[_minFillVolume]]' 
+              type='volume' 
+              selected-units='{{volumeUnits}}'>
+            </number-unit-input>
+          </div>
+      </div>
+      <div class='right-cards'>
+        <div class='card highlight'>
+          <div class='card-title'>Library</div>
+          <div class='card-text'>The library includes a list of coating pans with predefined measurements. The library is based on coating pans found 
+          at different Colocon sites and coating pan vendor specfications. Choose one today to get started.</div>
+        </div>
+        <div class='card'>
+          <div class='card-title'>Information</div>
+          <text-input title='Vendor' value='[[vendorName]]' on-value-changed='_vendorNameChanged'></text-input>
+          <text-input title='Equipment' value='[[equipmentName]]' on-value-changed='_equipmentNameChanged'></text-input>
+          <text-input title='Nickname' value='[[nickname]]' on-value-changed='_nicknameChanged'></text-input>
+          <text-input title='Company' value='[[companyName]]' on-value-changed='_companyNameChanged'></text-input>
+          <text-input title='Location' value='[[locationName]]' on-value-changed='_locationNameChanged'></text-input>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class CoatingPanPage extends CoatingDashboard.CoatingPanMixin(Polymer.Element) {
+      
+      static get is() { return 'coating-pan-page'; }
+      
+      static get properties() {
+        return {
+          lengthUnits: {
+            type: String,
+            value: 'in'
+          },
+          volumeUnits: {
+            type: String,
+            value: 'l'
+          }
+        };
+      }
+      
+      _panDiameterChanged(e){
+        this.dispatch({
+          type: 'SET_PAN_DIAMETER',
+          value: e.detail.value
+        });
+      }
+      
+      _openingDiameterChanged(e){
+        this.openingDiameter = e.detail.value;
+      }
+      
+      _wallWidthChanged(e){
+        this.wallWidth = e.detail.value;
+      }
+      
+      _brimWidthChanged(e){
+        this.brimWidth = e.detail.value;
+      }
+      
+      _vendorNameChanged(e){
+        this.vendorName = e.detail.value;
+      }
+      
+      _equipmentNameChanged(e){
+        this.equipmentName = e.detail.value;
+      }
+      
+      _nicknameChanged(e){
+        this.nickname = e.detail.value;
+      }
+      
+      _companyNameChanged(e){
+        this.companyName = e.detail.value;
+      }
+      
+      _locationNameChanged(e){
+        this.locationName = e.detail.value;
+      }
+      
+      _isOverfilled(maxFillVolume, fillVolume) {
+        return (maxFillVolume < fillVolume);
+      }
+      
+      _saveCoatingPan() {
+        this.$.panQuery.ref.push({
+          vendorName: this.vendorName,
+          equipmentName: this.equipmentName,
+          nickname: this.nickname,
+          companyName: this.companyName,
+          locationName: this.locationName,
+          panDiameter: this.panDiameter,
+          openingDiameter: this.openingDiameter,
+          brimWidth: this.brimWidth,
+          wallWidth: this.wallWidth,
+          calculatedBrimVolume: this._brimVolume,
+          calculatedMaxFillVolume: this._maxFillVolume,
+          calculatedMinFillVolume: this._minFillVolume
+          
+        });
+      }
+      
+    }
+
+    window.customElements.define(CoatingPanPage.is, CoatingPanPage);
+  </script>
+</dom-module>

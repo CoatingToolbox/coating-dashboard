@@ -1,0 +1,655 @@
+
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="redux-mixin.html">
+
+<script>
+
+  window.CoatingDashboard = window.CoatingDashboard || {};
+
+  CoatingDashboard.CoatingPanMixin = function(superClass) { 
+    
+    return class extends ReduxMixin(superClass) {
+      
+      constructor() {
+          super()
+      }
+      
+      static get properties() {
+        return {
+          panDiameter: {
+            type: Number,
+            statePath: 'pan.panDiameter'
+          },
+          openingDiameter: {
+            type: Number,
+            statePath: 'pan.openingDiameter'
+          },
+          wallWidth: {
+            type: Number,
+            statePath: 'pan.wallWidth'
+          },
+          brimWidth: {
+            type: Number,
+            statePath: 'pan.brimWidth'
+          },
+          fillVolume: {
+            type: Number,
+            statePath: 'pan.fillVolume'
+          },
+          vendorName: {
+            type: String,
+            value: "O'Hara"
+          },
+          equipmentName: {
+            type: String,
+            value: 'Fastcoat 48"'
+          },
+          nickname: {
+            type: String,
+            value: ''
+          },
+          companyName: {
+            type: String,
+            value: ''
+          },
+          locationName: {
+            type: String,
+            value: ''
+          },
+          
+          _brimHeight: {
+            type: Number,
+            computed: 'computeBrimHeight(panDiameter, openingDiameter)'
+          },
+          _brimLength: {
+            type: Number,
+            computed: 'computeBrimLength(panDiameter, _brimHeight)'
+          },
+          _sideWallSlope: {
+            type: Number,
+            computed: 'computeSideWallSlope(_brimHeight, brimWidth, wallWidth)'
+          },
+          _brimVolume: {
+            type: Number,
+            computed: 'computeVolume(_brimHeight, wallWidth, panDiameter, _sideWallSlope)'
+          },
+          _maxFillHeight: {
+            type: Number,
+            computed: 'computeMaxFillHeight(_brimHeight)'
+          },
+          _minFillHeight: {
+            type: Number,
+            computed: 'computeMinFillHeight(_brimHeight)'
+          },
+          _maxFillVolume: {
+            type: Number,
+            computed: 'computeVolume(_maxFillHeight, wallWidth, panDiameter, _sideWallSlope)'
+          },
+          _minFillVolume: {
+            type: Number,
+            computed: 'computeVolume(_minFillHeight, wallWidth, panDiameter, _sideWallSlope)'
+          },
+          _fillWidth: {
+            type: Number,
+            computed: 'computeFillWidth(_fillHeight, _sideWallSlope, wallWidth)'
+          },
+          _fillToBrim: {
+            type: Number,
+            computed: 'computeFillToBrim(_fillHeight, _brimHeight)'
+          },
+          _fillHeight: {
+            type: Number,
+            computed: 'computeFillHeight(_brimHeight, panDiameter, wallWidth, _sideWallSlope, fillVolume)'
+          },
+          _fillLength: {
+            type: Number,
+            computed: 'computeFillLength(panDiameter, _fillHeight)'
+          },
+          _sideWallLength: {
+            type: Number,
+            computed: 'computeSideWallLength(brimWidth, wallWidth, _brimHeight)'
+          },
+          
+          _svg: {
+            type: Object,
+            value: function() {
+              return {
+    
+                // padding around the edge of svg
+                padding: 1.5,
+                
+                // the end cap of the dimension line
+                cap: 2,
+    
+                //target width of svg
+                width: 24,
+    
+                maxLength: 1.75,
+    
+                // center starting point
+                get center() {
+                    return this.width / 2;
+                },
+    
+                // scale: 2100
+                // the value to multiple other dimensions by to scale
+                get scale() {
+                    return (this.width - (2 * this.padding)) / this.maxLength;
+                }
+              };
+            }
+          },
+          _pathSidePan: {
+            type: String,
+            computed: '_getSidePan(panDiameter, openingDiameter, wallWidth, brimWidth)'
+          },
+          _pathSideWidthLine: {
+            type: String,
+            computed: '_getSideWidthLine(panDiameter, brimWidth)'
+          },
+          _pathSideVolume: {
+            type: String,
+            computed: '_getSideVolume(panDiameter, openingDiameter, wallWidth, brimWidth)'
+          },
+          _pathFrontPanDiameter: {
+            type: String,
+            computed: '_getFrontPan(panDiameter)'
+          },
+          _pathFrontOpeningDiameter: {
+            type: String,
+            computed: '_getFrontPan(openingDiameter)'
+          },
+          _pathFrontPanDiameterLine: {
+            type: String,
+            computed: '_getFrontPanDiameterLine(panDiameter)'
+          },
+          _pathFrontOpeningDiameterLine: {
+            type: String,
+            computed: '_getFrontOpeningDiameterLine(openingDiameter, panDiameter)'
+          },
+          _pathFrontBrimHeightLine: {
+            type: String
+          },
+          _pathFrontFill: {
+            type: String,
+            computed: '_getFrontFill(panDiameter, _fillHeight)'
+          },
+          _pathFrontFillHeightLine: {
+            type: Number,
+            computed: '_getFrontFillHeightLine(panDiameter, _fillHeight)'
+          },
+          _pathFrontFillBrimLine: {
+            type: Number,
+            computed: '_getFrontFillBrimLine(panDiameter, openingDiameter, _fillHeight)'
+          },
+          _pathFrontFillLengthLine: {
+            type: Number,
+            computed: '_getFrontFillLengthLine(panDiameter, _fillLength)'
+          },
+          _pathSideFill: {
+            type: Number,
+            computed: '_getSideFill(panDiameter, openingDiameter, wallWidth, brimWidth, _fillHeight)'
+          },
+          _pathSideFillWidthLine: {
+            type: Number,
+            computed: '_getSideFillWidthLine(panDiameter, _fillWidth)'
+          },
+          _pathSideFillBrimLine: {
+            type: Number,
+            computed: '_getSideFillBrimLine(_fillWidth, panOpening, brimWidth)'
+          },
+          _pathSideFillHeightLine: {
+            type: Number,
+            computed: '_getSideFillHeightLine(panDiameter, _fillHeight, _brimDepth)'
+          }
+          
+        };
+      }
+
+      // Path for SVG Graphics
+      _getSidePan(diameter, open, wall, brim) {
+        let svg = this._svg;
+        //helper values
+        let scaledDiameter = diameter * svg.scale;
+        let scaledOpen = open * svg.scale;
+        let scaledWall = wall * svg.scale;
+        let scaledDepth = brim * svg.scale;
+        
+        //distance from brim to starting wall. Only one side This gives us the slope of the pan walls
+        let wallX = (scaledDepth - scaledWall) / 2;
+        //the difference in height from the brim to diameter only on one side
+        let wallY = (scaledDiameter - scaledOpen) / 2;
+        
+        return "M " + svg.center + " " + svg.center + 
+                " m " + (scaledDepth / 2) + " " + (scaledOpen / 2) +
+                " l " + -wallX + " " + wallY + 
+                " l " + -scaledWall + " 0" +
+                " l " + -wallX + " " + -wallY +
+                " l 0 " + -scaledOpen +
+                " l " + wallX + " " + -wallY +
+                " l " + scaledWall + " 0" + 
+                " l " + wallX + " " + wallY +
+                " l 0 " + scaledOpen + " z";
+      }
+      _getSideWidthLine(diameter, depth) {
+        let svg = this._svg;
+        let scaledDiameter = diameter * svg.scale;
+        let scaledDepth = depth * svg.scale;
+  
+        return  "M " + (svg.center + scaledDepth / 2) + ' ' + (svg.center + scaledDiameter / 2 + svg.padding) +
+                    " l 0 " + svg.cap +
+                    " m 0 " + (-svg.cap / 2) + 
+                    " l " + -scaledDepth + " 0 " +
+                    " m 0 " + (svg.cap / 2) + 
+                    " l 0 " + -svg.cap ;    
+      }
+      _getSideVolume(diameter, open, wall, brim) {
+        let svg = this._svg;
+        //helper values
+        let scaledDiameter = diameter * svg.scale;
+        let scaledOpen = open * svg.scale;
+        let scaledWall = wall * svg.scale;
+        let scaledDepth = brim * svg.scale;
+        
+        //distance from brim to starting wall. Only one side This gives us the slope of the pan walls
+        let wallX = (scaledDepth - scaledWall) / 2;
+        //the difference in height from the brim to diameter only on one side
+        let wallY = (scaledDiameter - scaledOpen) / 2;
+        
+        return "M " + svg.center + " " + svg.center + 
+                " m " + (scaledDepth / 2) + " " + (scaledOpen / 2) +
+                " l " + -wallX + " " + wallY + 
+                " l " + -scaledWall + " 0" +
+                " l " + -wallX + " " + -wallY + " z";
+      }
+      _getSideWallLine(diameter, open, wall, brim) {
+          let svg = this._svg;
+          //helper values
+          let scaledDiameter = diameter * svg.scale;
+          let scaledOpen = open * svg.scale;
+          let scaledWall = wall * svg.scale;
+          let scaledDepth = brim * svg.scale;
+        
+          //distance from brim to starting wall. Only one side This gives us the slope of the pan walls
+          let wallX = (scaledDepth - scaledWall) / 2;
+          //the difference in height from the brim to diameter only on one side
+          let wallY = (scaledDiameter - scaledOpen) / 2;
+          
+          // the x and y coordinate to move the end cap along
+          // the inverse and negative slop of the wall line
+          let capSlope = -wallX / wallY;
+          let capX = Math.sqrt(Math.pow(svg.cap, 2) / (1 + Math.pow(capSlope, 2)));
+          let capY = capX * capSlope;
+          
+          return  "M " + svg.center + " " + svg.center + 
+                      " m " + (scaledDepth / 2 + svg.padding ) + " " + (scaledOpen / 2 + -capY) +
+                      " l " + capX + " " + -capY +
+                      " m " + (-capX / 2) + " " + (capY / 2) +
+                      " l " + -wallX + " " + wallY + 
+                      " m " + (-capX / 2) + " " + (capY / 2) +
+                      " l " + capX + " " + -capY;
+        }
+      _getFrontPan(diameter) {
+          let svg = this._svg;
+          //helper values
+          let scaledDiameter = diameter * svg.scale;
+          let rad = scaledDiameter / 2;
+      
+          return  "M " + svg.center + " " + svg.center +
+                  " m " + -rad + " 0" +
+                  " a " + rad + " " + rad + " 0 0 0 " + scaledDiameter + " 0" +
+                  " a " + rad + " " + rad + " 0 0 0 " + -scaledDiameter + " 0 z";
+      } 
+      _getFrontPanDiameterLine(diameter) {
+          let svg = this._svg;
+         let scaledDiameter = diameter * svg.scale;
+    
+         return "M " + (svg.center + scaledDiameter / 2 + svg.padding) + ' ' + (svg.center - scaledDiameter / 2) +
+                     " l " + svg.cap + " 0" +
+                     " m " + (-svg.cap / 2) + " 0" +
+                     " l 0 " + scaledDiameter +
+                     " m " + (svg.cap / 2) + " 0" +
+                     " l " + -svg.cap + " 0";
+        }
+      _getFrontOpeningDiameterLine(open, diameter) {
+          let svg = this._svg;
+         let scaledOpen = open * svg.scale;
+         let scaledDiameter = diameter * svg.scale;
+    
+         return  "M " + (svg.center + scaledDiameter / 2 + svg.padding) + ' ' + (svg.center - scaledOpen / 2) +
+                     " l " + svg.cap + " 0" +
+                     " m " + (-svg.cap / 2) + " 0" +
+                     " l 0 " + scaledOpen +
+                     " m " + (svg.cap / 2) + " 0" +
+                     " l " + -svg.cap + " 0";
+       }
+      _getFrontBrimHeightLine(open, diameter) {
+           let svg = this._svg;
+           let scaledOpen = open * svg.scale;
+           let scaledDiameter = diameter * svg.scale;
+           let scaledBrim = (scaledDiameter - scaledOpen) / 2;
+      
+           return  "M " + (svg.center + scaledDiameter / 2 + svg.padding) + ' ' + (svg.center + scaledOpen / 2) +
+                       " l " + svg.cap + " 0" +
+                       " m " + (-svg.cap / 2) + " 0" +
+                       " l 0 " + scaledBrim +
+                       " m " + (svg.cap / 2) + " 0" +
+                       " l " + -svg.cap + " 0";
+                       
+         }  
+      _getFrontFill(diameter, fill){
+        let svg = this._svg;
+        //helper values
+        let scaledDiameter = diameter * svg.scale;
+        let scaledRadius = scaledDiameter / 2;
+        let scaledFill = fill * svg.scale;
+        
+        //we stopp the graphic if fill height is bigger than pan radius
+        if(scaledFill > scaledRadius){
+          scaledFill = scaledRadius;
+        }
+        
+        //the difference of the pan radius and fill height
+        let gapHeight = scaledRadius - scaledFill;
+        //right triangle from radius and gap height gives x coordinate for starting arc fill
+        let fillHalfChord = Math.sqrt(Math.pow(scaledRadius, 2) - Math.pow(gapHeight, 2));
+        
+        return  "M " + (svg.center - fillHalfChord) + " " + (svg.center + gapHeight) +
+                      " a " + scaledRadius + " " + scaledRadius + " 0 0 0 " + (2 * fillHalfChord) + " 0 z";
+      }
+      _getFrontFillHeightLine(diameter, fill){
+        let svg = this._svg;
+        //helper values
+          let scaledDiameter = diameter * svg.scale;
+          let scaledRadius = scaledDiameter / 2;
+          let scaledFill = fill * svg.scale;
+          
+          //we stopp the graphic if fill height is bigger than pan radius
+          if(scaledFill > scaledRadius){
+            scaledFill = scaledRadius;
+          }
+           
+          return "M " + (svg.center + scaledRadius + svg.padding) + ' ' + (svg.center + scaledRadius - scaledFill) +
+                      " l " + svg.cap + " 0" +
+                      " m " + (-svg.cap / 2) + " 0" +
+                      " l 0 " + scaledFill +
+                      " m " + (svg.cap / 2) + " 0" +
+                      " l " + -svg.cap + " 0";
+        }
+      _getFrontFillBrimLine(diameter, open, brim){
+        let svg = this._svg;
+        //helper values
+          let scaledDiameter = diameter * svg.scale;
+          let scaledRadius = scaledDiameter / 2;
+          let scaledOpen = open * svg.scale;
+          let scaledBrim = brim * svg.scale;
+        
+          //we stopp the graphic if fill height is bigger than pan radius
+          if(scaledBrim < 0){
+            scaledBrim = 0;
+          }
+         
+          return "M " + (svg.center + scaledRadius + svg.padding) + ' ' + (svg.center + scaledOpen / 2) +
+                      " l " + svg.cap + " 0" +
+                      " m " + (-svg.cap / 2) + " 0" +
+                      " l 0 " + scaledBrim +
+                      " m " + (svg.cap / 2) + " 0" +
+                      " l " + -svg.cap + " 0";
+        }
+      _getFrontFillLengthLine(diameter, width){
+        let svg = this._svg;
+        //helper values
+          diameter = diameter * svg.scale;
+          width = width * svg.scale;
+         
+          return "M " + (svg.center + width / 2) + ' ' + (svg.center + diameter / 2) +
+                      " l 0 " + svg.cap +
+                      " m 0 " + (-svg.cap / 2) +
+                      " l " + -width + " 0" +
+                      " m 0 " + (svg.cap / 2) +
+                      " l 0 " + -svg.cap;
+      }
+      _getSideFill(diameter, open, wall, brim, fill) {
+        let svg = this._svg;
+        //helper values
+        let scaledDiameter = diameter * svg.scale;
+        let scaledOpen = open * svg.scale;
+        let scaledWall = wall * svg.scale;
+        let scaledDepth = brim * svg.scale;
+        let scaledFill = fill * svg.scale;
+        let brimToFill = (scaledDiameter - scaledOpen) / 2 - scaledFill;
+        
+        //distance from brim to starting wall. Only one side This gives us the slope of the pan walls
+        let wallX = (scaledDepth - scaledWall) / 2;
+        //the difference in height from the brim to diameter only on one side
+        let wallY = (scaledDiameter - scaledOpen) / 2;
+        
+        let slope = wallY / wallX;
+        
+        let fillX = brimToFill / slope;
+        
+        return "M " + svg.center + " " + svg.center + 
+                " m " + (scaledDepth / 2) + " " + (scaledOpen / 2) +
+                " m " + (-fillX) + " " + (brimToFill) + 
+                " l " + (-wallX + fillX) + " " + (wallY - brimToFill) + 
+                " l " + -scaledWall + " 0" +
+                " l " + (-wallX + fillX) + " " + (-wallY + brimToFill) + " z";
+      }
+      _getSideFillWidthLine(diameter, depth){
+        let svg = this._svg;
+        //helper values
+        diameter = diameter * svg.scale;
+        depth = depth * svg.scale;
+       
+        return "M " + (svg.center + depth / 2) + ' ' + (svg.center + diameter / 2) +
+                   " l 0 " + svg.cap +
+                   " m 0 " + (-svg.cap / 2) +
+                   " l " + -depth + " 0" +
+                   " m 0 " + (svg.cap / 2) +
+                   " l 0 " + -svg.cap;
+      }
+      _getSideFillBrimLine(depth, open, brim){
+        let svg = this._svg;
+        //helper values
+        let scaledDepth = depth * svg.scale;
+        let scaledOpen = open * svg.scale;
+        let scaledBrim = brim * svg.scale;
+      
+        //we stopp the graphic if fill height is bigger than pan radius
+        if(scaledBrim < 0){
+          scaledBrim = 0;
+        }
+       
+        return "M " + (svg.center + scaledDepth / 2 + svg.padding) + ' ' + (svg.center + scaledOpen / 2) +
+                    " l " + svg.cap + " 0" +
+                    " m " + (-svg.cap / 2) + " 0" +
+                    " l 0 " + scaledBrim +
+                    " m " + (svg.cap / 2) + " 0" +
+                    " l " + -svg.cap + " 0";
+     }
+      _getSideFillHeightLine(diameter, fill, depth){
+        let svg = this._svg;
+         //helper values
+         let scaledDiameter = diameter * svg.scale;
+         let scaledDepth = depth * svg.scale;
+         let scaledFill = fill * svg.scale;
+        
+         //we stopp the graphic if fill height is bigger than pan radius
+         if(scaledFill > scaledDiameter / 2){
+           scaledFill = scaledDiameter / 2;
+         }
+         
+         return "M " + (svg.center + scaledDepth / 2 + svg.padding) + ' ' + (svg.center + scaledDiameter / 2 - scaledFill) +
+                    " l " + svg.cap + " 0" +
+                    " m " + (-svg.cap / 2) + " 0" +
+                    " l 0 " + scaledFill +
+                    " m " + (svg.cap / 2) + " 0" +
+                    " l " + -svg.cap + " 0";
+        }
+      
+      // COMPUTED PROPERTIES FUNCTIONS
+      computeFillWidth(fillHeight, sideWallSlope, wallWidth) {
+        //the "run" or Width that we moved on one side of the pan side wall
+        let dist = fillHeight / sideWallSlope;
+        return wallWidth + dist + dist;
+      }
+      computeFillToBrim(fillHeight, brimHeight) {
+        return (fillHeight < brimHeight) ? brimHeight - fillHeight : 0;
+      }
+      computeFillHeight(brimHeight, panDiameter, wallWidth, sideWallSlope, fillVolume) {
+        //we estimate the heigh that will match our fill volume
+        let radius = panDiameter / 2;
+        for(let i=0; i<brimHeight; i = i + 0.0001){
+          let saggita = brimHeight - i;
+          let chord = this._calcChordLength(radius, saggita);
+          let volume = this._calcVolume(chord, saggita, wallWidth, radius, sideWallSlope);
+          if(volume <= fillVolume){
+            return saggita;
+            break;
+          }
+        }
+      }
+      computeFillLength(panDiameter, fillHeight) {
+        return this._calcChordLength(panDiameter / 2, fillHeight);
+        
+      }
+      computeSideWallLength(brimWidth, wallWidth, brimHeight) {
+        // pythogrean theroem
+        // a2 + b2 = c2
+        // run = the distance on one side
+        let a2 = Math.pow(((brimWidth - wallWidth) / 2), 2);
+        let b2 = Math.pow(brimHeight, 2);
+        return Math.sqrt(a2 + b2);
+      }
+      computeBrimHeight(pan, opening) {
+        return (pan - opening) / 2;
+      }
+      computeBrimLength(panDiameter, brimHeight) {
+        return this._calcChordLength(panDiameter / 2, brimHeight);
+      }
+      computeSideWallSlope(brimHeight, brimWidth, wallWidth) {
+        // slope = rise / run
+        // run = the distance on one side
+        return brimHeight / ((brimWidth - wallWidth) / 2);
+      }
+      computeVolume(fillHeight, wallWidth, panDiameter, sideWallSlope) {
+        //two section to get the volume
+        // 1. main cylinder along the flat pan wall
+        // 2. two maxsides along the sloped side walls
+        
+        let radius = panDiameter / 2;
+        
+        // at this height determine the width / chord;
+        let width = this._calcChordLength(radius, fillHeight);
+        
+        // to get the main cylinder volume we calculate the area of the sphere segment 
+        // times the width of the pan wall
+        let center = this._calcSphereSectionArea(radius, width, fillHeight) * wallWidth;
+        
+        //side wall volume is like a cone
+        let cone = this._calcSideWallVolume(radius, fillHeight, sideWallSlope);
+        
+        //to get the total volume we use the center and two cones;
+        // value is in meters ^3
+        return center + cone + cone;
+      }
+      computeMaxFillHeight(brimHeight) {
+        let limit = 0.0254;
+        if(brimHeight < 0.0254 * 4) {
+          limit = 0.0254 / 2;
+        }
+        return brimHeight - limit;
+      }
+      computeMinFillHeight(brimHeight) {
+        return brimHeight * 0.6;
+      }
+        
+      // HELPER FUNCTIONS
+      _calcVolume(brimLength, brimHeight, wallWidth, radius, sideWallSlope) {
+        //two section to get the volume
+        // 1. main cylinder along the flat pan wall
+        // 2. two sides along the sloped side walls
+        // to get the main cylinder volume we calculate the area of the sphere segment 
+        // times the width of the pan wall
+        let center = this._calcSphereSectionArea(radius, brimLength, brimHeight) * wallWidth;
+        //side wall volume is like a cone
+        let cone = this._calcSideWallVolume(radius, brimHeight, sideWallSlope);
+        //to get the total volume we use the center and two cones;
+        // value is in meters ^3
+        return center + cone + cone;
+      }
+      _calcChordLength(radius, saggita) {
+        //brim width... the chord length at the brim height
+        //typically close to the full diameter as the brim height is near the center
+        //determined from pythogrean therom of a triangle from the brim height chord and radius
+        return 2 * Math.sqrt(Math.pow(radius, 2) - Math.pow((radius - saggita), 2)); 
+      }
+      _calcSphereSectionArea(radius, chord, saggita){
+        //see link for more details
+        // http://mathworld.wolfram.com/CircularSegment.html
+        
+        //the total area of a circle with the diameter
+        let fullCircleArea = Math.PI * Math.pow(radius, 2);
+        
+        //split the width in half making a right angle triangle
+        //determine the angle using sin (opposite / hypoteneus)
+        //times two since we need both sides
+        let centralAngle = 2 * Math.asin((chord / 2) / radius);
+        
+        //the area of the sphere from the central angle
+        //the central angle divided by 2 x PI in radians is the fraction of the area we need
+        // central angle is in radians
+        let sectionArea = centralAngle / (2 * Math.PI) * fullCircleArea;
+        
+        //we determine the area of a the triangle to be removed
+        // base * height / 2
+        //base is the width or brimWidth
+        // height is the radius - brimHeight aka height
+        let triangleArea = chord * (radius - saggita) / 2;
+        
+        //remove the triangle area leaving the area of the circle segment
+        return sectionArea - triangleArea;
+      }
+      _calcSideWallVolume(radius, height, slope) {
+        //the volume of the side wall is estimated by using incremental
+        //distances along the side wall and calculated how the differences in height
+        
+        // create a letiable to hold total volume
+        let volume = 0;
+        
+        //the number of increments
+        let inc = 10;
+        
+        // Determine the incremental rise or height
+        let heightInc = height / inc;
+        //determine the incremental run or Width change
+        let depthInc = heightInc / slope;
+        
+        //we use small area section along the slop and add them together
+        for(let i=0; i < inc; i++) {
+          //first we correct for the new height along the side wall slope
+          
+          //this is the loss in height along the sloped side wall
+          let h = heightInc * i;
+          
+          // the new radius after we account for the change in height along the slope
+          let smallerRadius = radius - h;
+          
+          // the new saggita is also reduced by the change in height
+          let smallerSaggita = height - h;
+          
+          // next we determine the new chord length created from the smaller circle segment
+          let smallerChord = this._calcChordLength(smallerRadius, smallerSaggita);
+          
+          //from this we get the segment area 
+          let smallerArea = this._calcSphereSectionArea(smallerRadius, smallerChord, smallerSaggita);
+          
+          //we turn area into volume by multiplying by our depth increment and
+          // we add this section to the total volume
+          volume = volume + smallerArea * depthInc;
+        }
+        return volume;
+      }
+    }
+  };
+</script>
