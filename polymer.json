@@ -2,7 +2,9 @@
   "entrypoint": "index.html",
   "shell": "src/my-app.html",
   "fragments": [
-    "src/pages/coating-pan-page.html"
+    "src/pages/coating-pan-page.html",
+    "src/pages/coating-pan-library-page.html",
+    "src/pages/tablet-page.html"
   ],
   "builds": [{
     "name": "bundled",

@@ -14,6 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<!--<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">-->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../elements/number-unit-input.html">
 <link rel="import" href="../mixins/redux-mixin.html">
@@ -125,14 +126,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background-color: var(--app-background-color);
       }
       .icon {
-        width: 40px;
+        width: 80px;
         color: var(--text-secondary-color);
+      }
+      .icons-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        width: 80px;
+      }
+      .checkbox {
+        width: 26px;
+        color: var(---text-secondary-color);
       }
     </style>
     
     <firebase-auth id="auth" user="{{user}}"></firebase-auth>
-    <firebase-query path='/pans' data='{{pans}}'></firebase-query>
-    
+    <firebase-query id='panQuery' path='/pans' data='{{pans}}'></firebase-query>
     
     <div id='header'>
       <div class='card'>
@@ -150,6 +160,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <table class='table'>
         <thead>
           <tr>
+            <!--<th class='checkbox'></th>-->
             <th class='text'>Equipment Name</th>
             <th class='text'>Nickname</th>
             <th class='text'>Company</th>
@@ -161,12 +172,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <tbody>
           <template is='dom-repeat' items='[[pans]]'>
             <tr>
+              <!--<td class='checkbox'>-->
+              <!--  <paper-checkbox on-tap='_clearOtherCheckboxes'></paper-checkbox>-->
+              <!--</td>-->
               <td class='text'>[[item.vendorName]] [[item.equipmentName]]</td>
               <td class='text'>[[item.nickname]]</td>
               <td class='text'>[[item.companyName]] [[item.locationName]]</td>
               <td class='numeric'>[[_converToInches(item.panDiameter)]]</td>
-              <td class='numeric'>[[_convertToLiters(item.calculatedMinFillVolume)]] - [[_convertToLiters(item.calculatedMaxFillVolume)]]</td>
-              <td class='icon'><paper-icon-button icon='my-icons:load' on-tap='_loadPan'></paper-icon-button></td>
+              <td class='numeric'>[[_convertToLiters(item.calculatedMinFillVolume)]] to [[_convertToLiters(item.calculatedMaxFillVolume)]]</td>
+              <td class='icon'>
+                <div class='icons-container'>
+                  <paper-icon-button icon='my-icons:load' on-tap='_loadPan'></paper-icon-button>
+                  <paper-icon-button icon='my-icons:delete' on-tap='_removePan'></paper-icon-button>
+                </div>
+              </td>
             </tr>
           </template>
         </tbody>
@@ -182,14 +201,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
       static get properties() {
         return {
-          pans: {
+          user: {
             type: Object
-          }
+          },
+          pans: {
+            type: Array,
+          },
         };
       }
       
       _convertToLiters(val) {
-        return (val / 0.001 ).toFixed(1);
+        return (val / 0.001 ).toFixed(0);
       }
       
       _converToInches(val) {
@@ -204,6 +226,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.location = '#/coating-pan';
       }
       
+      _removePan(e) {
+        this.$.panQuery.ref.child(e.model.item.$key).remove();
+      }
       
     }
 

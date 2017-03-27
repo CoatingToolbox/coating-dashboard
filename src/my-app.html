@@ -10,7 +10,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
@@ -80,7 +79,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       database-url="https://coating-dashboard.firebaseio.com/"
       api-key=" AIzaSyBX4-arc-JogvP_4heFyqZBudMJY3s_KN4">
     </firebase-app>
-    <firebase-auth id="auth" user="{{user}}" on-error='_authError'></firebase-auth>
 
     <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route
@@ -94,6 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="drawer" slot="drawer">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="tablet" href="#/tablet">Tablet</a>
           <a name="coating-pan" href="#/coating-pan">Coating Pan</a>
         </iron-selector>
       </app-drawer>
@@ -111,10 +110,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-pages
             selected="[[page]]"
             attr-for-selected="name"
-            fallback-selection="coating-pan"
+            fallback-selection="tablet"
             role="main">
           <coating-pan-page name='coating-pan'></coating-pan-page>
           <coating-pan-library-page name='coating-pan-library'></coating-pan-library-page>
+          <tablet-page name='tablet'></tablet-page>
         </iron-pages>
         
       </app-header-layout>
@@ -141,10 +141,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           '_routePageChanged(routeData.page)',
         ];
       }
-      
-      _ready(){
-        this.$.auth.signInAnonymously();
-      }
 
       _routePageChanged(page) {
         // Polymer 2.0 will call with `undefined` on initialization.
@@ -155,7 +151,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         // If no page was found in the route data, page will be an empty string.
         // Deault to 'view1' in that case.
-        this.page = page || 'coating-pan';
+        this.page = page || 'tablet';
 
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
@@ -172,12 +168,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             null,
             true);
       }
-      
-      _authError(e) {
-        console.log('auth failed');
-      }
     }
 
     window.customElements.define(MyApp.is, MyApp);
+    
   </script>
 </dom-module>

@@ -1,0 +1,265 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../mixins/tablet-mixin.html">
+<link rel="import" href="../elements/text-input.html">
+<link rel="import" href="../elements/number-unit-input.html">
+<link rel="import" href="../my-icons.html">
+<link rel="import" href="shared-page-styles.html">
+
+<dom-module id="tablet-page">
+  <template>
+    <style include='shared-page-styles'>
+      :host {
+        --app-primary-color: #00897b;
+      }
+    
+      #graphic-container {
+        display: flex;
+        justify-content: space-around;
+      }
+      .tablet-graphic {
+        height: 256px;
+        width: 256px;
+        fill: var(--app-primary-color);
+        fill-opacity: 0.4;
+        stroke: var(--app-primary-color);
+        stroke-width: 0.25px;
+        stroke-linejoin: round;
+      }
+    </style>
+    
+    <firebase-auth id="auth" user="{{user}}"></firebase-auth>
+    <firebase-query id='tabletQuery' path='/tablets'></firebase-query>
+    
+    <div id='header-container'>
+      <div id='header-card'>
+        <div id='header-subhead'>Material</div>
+        <div id='header-title'>Tablet</div>
+        <div id='header-text'>
+          The tablet dashboard provies insight into the tablet you are coating. With a focus on tablet properties 
+  				important to the coating process. Input a few dimensions of your compressed tablet and see estimated values of surface area, 
+  				compressed density and volume. Or choose a tablet from the library.
+        </div>
+      </div>
+    </div>
+    
+    <!--<div class='warning-chip' hidden=''>-->
+    <!--  <iron-icon icon='my-icons:warning'></iron-icon>-->
+    <!--  <div class='warning-text'>-->
+    <!--    Batch Volume exceed maximum working volume. Considering lower batch size or choosing a bigger coating pan.-->
+    <!--  </div>-->
+    <!--</div>-->
+    
+    <!--<div class='warning-chip'>-->
+    <!--  <iron-icon icon='my-icons:warning'></iron-icon>-->
+    <!--  <div class='warning-text'>-->
+    <!--    Looks like you are creating a custom coating pan. Save it to reference it again later.-->
+    <!--  </div>-->
+    <!--  <paper-button raised on-tap='_saveCoatingPan'>Save</paper-button>-->
+    <!--</div>-->
+    
+    <div id='main-container'>
+      
+      <div id='left-column'>
+        
+        <div class='card'>
+          <div class='card-title'>Tablet Outline</div>
+          <div id='graphic-container'>
+            
+            <svg class='tablet-graphic' viewbox='0 0 24 24'>
+              <path d$='[[pathTopTablet]]'></path>
+            </svg>
+            
+            <svg class='tablet-graphic' viewbox='0 0 24 24'>
+              <path d$='[[pathLengthSideTablet]]'></path>
+            </svg>
+            
+            <svg hidden class='tablet-graphic' viewbox='0 0 24 24'>
+              <path d$='[[pathWidthSideTablet]]'></path>
+            </svg>
+            
+          </div>
+        </div>
+          
+        <div class='card'>
+          <div class='card-title'>Inputs</div>
+          <number-unit-input
+    				title='Length' 
+    				value='[[length]]' 
+    				type='length' 
+    				selected-units='{{lengthUnits}}' 
+    				on-value-changed='lengthChanged' 
+    				details='The tablets longest dimension or diameter'>
+    			</number-unit-input>
+      	  <number-unit-input 
+      	  	title='Width'
+      	  	value='[[width]]'
+      	  	type='length'
+      	  	selected-units='{{lengthUnits}}'
+      	  	on-value-changed='widthChanged'
+      	  	details='The tablets shortest  dimension or diameter'
+      	  	hidden$='[[isRound(shape)]]'>
+      	  </number-unit-input>
+    			<number-unit-input 
+    				title='Total Thickness' 
+    				value='[[totalThickness]]' 
+    				type='length' 
+    				selected-units='{{lengthUnits}}' 
+    				details='The total thickness of the tablet.' 
+    				on-value-changed='totalThicknessChanged'>
+    			</number-unit-input>
+      	  <number-unit-input 
+      	  	title='Band Thickness' 
+      	  	value='[[bandThickness]]' 
+      	  	type='length' 
+      	  	selected-units='{{lengthUnits}}'  
+      	  	details='The thickness at the tablet belly band' 
+      	  	on-value-changed='bandThicknessChanged'>
+      	  </number-unit-input>
+      	  <number-unit-input 
+    				title='Weight' 
+    				value='[[weight]]' 
+    				type='weight' 
+    				selected-units='mg' 
+    				details='The average tablet weight' 
+    				on-value-changed='weightChanged'>
+    			</number-unit-input>
+        </div>
+        
+        <div class='card'>
+          <div class='card-title'>Estimated Tablet Properties</div>
+    			<number-unit-input  
+        	  no-input  
+      	  	title='Surface Area' 
+    			  value='[[totalArea]]' 
+    			  type='area' 
+    			  selected-units='{{areaUnits}}'
+    			  details='The estimated surface area of a single tabet'>
+    			</number-unit-input>
+    			<number-unit-input  
+        	  no-input  
+      	  	title='Volume' 
+    			  value='[[totalVolume]]' 
+    			  type='volume' 
+    			  selected-units='{{volumeUnits}}'
+    			  details='The estiamted volume of a single tablet'>
+    			</number-unit-input>
+    			<number-unit-input  
+        	  no-input  
+      	  	title='Compressed Density' 
+    			  value='[[compressedDensity]]' 
+    			  type='density' 
+    			  selected-units='g/ml'
+    			  details='The estiamted denisty of the compressed tablet'
+    			</number-unit-input>
+			  </div>
+			  
+			  <div class='card'>
+          <div class='card-title'>Estimated Tooling Properties</div>
+    			<number-unit-input 
+    			  no-input  
+    			  title='Cup Depth' 
+    			  value='[[cupThickness]]' 
+    			  type='length' 
+    			  selected-units='{{lengthUnits}}' 
+    			  details='The calculated depth of the tooling cup'>
+    			</number-unit-input>
+        	<number-unit-input 
+        	  no-input  
+        	  title='Cup Area' 
+        	  value='[[cupArea]]' 
+        	  type='area' 
+        	  selected-units='mm2' 
+        	  details='The estiamted surface area of the cup or tablet concavity'>
+        	</number-unit-input>
+        	<number-unit-input 
+        	  no-input  
+        	  title='Cup Volume' 
+        	  value='[[cupVolume]]' 
+        	  type='volume' 
+        	  selected-units='mm3' 
+        	  details='The estimated volume of the cup or tablet concavity'>
+        	</number-unit-input>
+			  </div>
+			  
+      </div>
+      
+      <div id='right-column'>
+        
+        <div class='highlight-card'>
+          <div class='card-title'>Tablet Library</div>
+          <div class='card-text'>The library includes a list of coating pans with predefined measurements. The library is based on coating pans found 
+          at different Colocon sites and coating pan vendor specfications. Choose one today to get started.
+          </div>
+          <paper-button class='highlight-button' raised on-tap='gotoLibrary'>Library</paper-button>
+        </div>
+        
+        <div class='card'>
+          <div class='card-title'>Information</div>
+          <text-input title='Product' value='[[productName]]' on-value-changed=''></text-input>
+          <text-input title='Formulation' value='[[formulationName]]' on-value-changed=''></text-input>
+          <text-input title='Tooling' value='[[toolingName]]' on-value-changed=''></text-input>
+          <text-input title='Company' value='[[companyName]]' on-value-changed=''></text-input>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class TabletPage extends CoatingDashboard.TabletMixin(Polymer.Element) {
+      
+      static get is() { return 'tablet-page'; }
+      
+      static get properties() {
+        return {
+          user: {
+            type: Object
+          },
+          lengthUnits: {
+            type: String,
+            value: 'mm'
+          },
+          volumeUnits: {
+            type: String,
+            value: 'cm3'
+          },
+          areaUnits: {
+            type: String,
+            value: 'cm2'
+          },
+          weightUnits: {
+            type: String,
+            value: 'mg'
+          }
+        };
+      }
+      
+      gotoLibrary() {
+        if(!this.user) {
+          this.$.auth.signInAnonymously();
+        }
+        // window.location = '#/tablet-library';
+      }
+      
+      isRound(shape) {
+        return (shape.toLowerCase() === 'round');
+      }
+      
+    }
+
+    window.customElements.define(TabletPage.is, TabletPage);
+  </script>
+</dom-module>
