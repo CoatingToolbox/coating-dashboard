@@ -212,28 +212,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         };
       }
       
-      static get observers() {
-        return [
-          'setVolume(weight, density)',
-          'setTabletCount(weight, tabletWeight)'
-        ];
-      }
-      
-      setVolume(weight, density) {
-        let vol = weight / density;
-        this.dispatch({
-          type: 'SET_BATCH_VOLUME',
-          value: vol
-        });
-      }
-      setTabletCount(batch, tablet) {
-        let count = Math.ceil(batch / tablet);
-        this.dispatch({
-          type: 'SET_BATCH_TABLET_COUNT',
-          value: count
-        });
-      }
-      
       weightChanged(e) {
         this.dispatch({
           type: 'SET_BATCH_WEIGHT',

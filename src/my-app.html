@@ -22,12 +22,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href='redux-mixin.html'>
-<link rel="import" href='elements/coating-pan-model.html'>
 
 <link rel="import" href="my-icons.html">
 
 <dom-module id="my-app">
   <template>
+    
     <style>
       :host {
         --app-primary-color: #2980b9;
@@ -81,7 +81,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       database-url="https://coating-dashboard.firebaseio.com/"
       api-key=" AIzaSyBX4-arc-JogvP_4heFyqZBudMJY3s_KN4">
     </firebase-app>
-
     <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route
         route="{{route}}"
@@ -89,8 +88,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         data="{{routeData}}"
         tail="{{subroute}}">
     </app-route>
-    
-    <coating-pan-model></coating-pan-model>
 
     <app-drawer-layout fullbleed force-narrow>
       <!-- Drawer content -->
@@ -129,6 +126,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
+  
     class MyApp extends CoatingDashboard.ReduxMixin(Polymer.Element) {
 
       static get is() { return 'my-app'; }

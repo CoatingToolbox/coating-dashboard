@@ -1,0 +1,18 @@
+<script>
+    class Batch {
+        
+        constructor(weight = 120000, density = 760000) {
+            this.weight = weight;
+            this.density = density;
+            this.tabletWeight = 0.400;
+        }
+        
+        get volume() {
+            return this.weight / this.density;
+        }
+        
+        get count () {
+            return Math.ceil(this.weight / this.tabletWeight);
+        }
+    }
+</script>

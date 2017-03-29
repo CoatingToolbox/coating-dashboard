@@ -45,23 +45,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <firebase-auth id="auth" user="{{user}}"></firebase-auth>
     <firebase-query id='tabletQuery' path='/tablets'></firebase-query>
     
-    <tablet-model
-      shape='[[shape]]'
-      width='[[width]]'
-      length='[[length]]'
-      weight='[[weight]]'
-      band-thickness='[[bandThickness]]'
-      total-thickness='[[totalThickness]]'
-      compressed-density='{{compressedDensity}}'
-      total-volume='{{totalVolume}}'
-      total-area='{{totalArea}}'
-      cup-thickness='{{cupThickness}}'
-      cup-area='{{cupArea}}'
-      cup-volume='{{cupVolume}}'
-      path-top-tablet='{{pathTopTablet}}'
-      path-length-side-tablet='{{pathLengthSideTablet}}'
-      path-width-side-tablt='{{pathWidthSideTablet}}'>
-    </tablet-model>
+    <!--<tablet-model-->
+    <!--  shape='[[shape]]'-->
+    <!--  width='[[width]]'-->
+    <!--  length='[[length]]'-->
+    <!--  weight='[[weight]]'-->
+    <!--  band-thickness='[[bandThickness]]'-->
+    <!--  total-thickness='[[totalThickness]]'-->
+    <!--  compressed-density='{{compressedDensity}}'-->
+    <!--  total-volume='{{totalVolume}}'-->
+    <!--  total-area='{{totalArea}}'-->
+    <!--  cup-thickness='{{cupThickness}}'-->
+    <!--  cup-area='{{cupArea}}'-->
+    <!--  cup-volume='{{cupVolume}}'-->
+    <!--  path-top-tablet='{{pathTopTablet}}'-->
+    <!--  path-length-side-tablet='{{pathLengthSideTablet}}'-->
+    <!--  path-width-side-tablt='{{pathWidthSideTablet}}'>-->
+    <!--</tablet-model>-->
       
     
     <div id='header-container'>
@@ -275,6 +275,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: Number,
             statePath: 'tablet.weight'
           }, 
+          totalArea: {
+            type: Number,
+            statePath: 'tablet.totalArea',
+          },
+          totalVolume: {
+            type: Number,
+            statePath: 'tablet.totalVolume'
+          },
+          compressedDensity: {
+            type: Number,
+            statePath: 'tablet.compressedDensity'
+          },
+          cupArea: {
+            type: Number,
+            statePath: 'tablet.cupArea'
+          },
+          cupVolume: {
+            type: Number,
+            statePath: 'tablet.cupVolume'
+          },
+          cupThickness: {
+            type: Number,
+            statePath: 'tablet.cupThickness'
+          },
           productName: {
             type: Number,
             statePath: 'tablet.productName'
@@ -394,12 +418,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
         // window.location = '#/tablet-library';
       }
-      
       isRound(shape) {
         return (shape.toLowerCase() === 'round');
       }
-      
-      
       
     }
 
