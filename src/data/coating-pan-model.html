@@ -7,17 +7,12 @@ class CoatingPan {
     this.openingDiameter = openingDiameter;
     this.wallWidth = wallWidth;
     this.brimWidth = brimWidth;
-    this.fillWeight = fillWeight;
-    this.fillDensity = fillDensity;
+    this.fillVolume = 0;
     this.manufacture = "O'Hara";
     this.equipment = 'Fastcoat';
     this.company = 'Colorcon';
     this.location = 'West Point, PA';
     this.description = '';
-  }
-  
-  get fillVolume() {
-    return this.fillWeight / this.fillDensity;
   }
   
   get fillWidth() {
