@@ -15,9 +15,9 @@
     };
     
     // sync initial values across different models
+    initialState.batch.tabletSurfaceArea = initialState.tablet.totalArea;
+    initialState.batch.tabletWeight = initialState.tablet.weight;
     initialState.pan.fillVolume = initialState.batch.volume;
-    // initialState.pan.fillDensity = initialState.tablet.bulkDensity;
-    // initialState.pan.fillWeight = initialState.tablet.batchWeight;
     // initialState.coating.batchWeight = initialState.tablet.batchWeight;
     // initialState.coating.tabletArea = initialState.tablet.totalArea;
   
@@ -295,9 +295,9 @@
         return state;
     }
     
-    console.log('batch volume is' + batch.volume);
-    pan.fillVolume = batch.volume;
-    console.log('fill height is' + pan.fillHeight);
+    batch.tabletSurfaceArea = tablet.totalArea;
+    batch.tabletWeight = tablet.weight;
+    pan.fillVolume = batch.volume;    
     
     return Object.assign({}, {
       pan: pan,

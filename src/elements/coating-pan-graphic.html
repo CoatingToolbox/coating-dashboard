@@ -3,9 +3,12 @@
 <dom-module id="coating-pan-graphic">
   <template>
     <style>
+    :host {
+      --pan-size: 256px
+    }
       .pan-graphic {
-        height: 256px;
-        width: 256px;
+        height: var(--pan-size);
+        width: var(--pan-size);
         fill: var(--text-secondary-color);
         fill-opacity: 0.4;
         stroke: var(--text-primary-color);

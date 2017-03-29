@@ -27,19 +27,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
       #graphic-container {
         display: flex;
-        justify-content: space-around;
+        flex-direction: column;
+        align-items: center
+        /*justify-content: space-around;*/
       }
-      .pan-graphic {
-        height: 256px;
-        width: 256px;
-        fill: var(--text-secondary-color);
-        fill-opacity: 0.4;
-        stroke: var(--text-primary-color);
-        stroke-width: 0.25px;
-        stroke-linejoin: round;
-      }
-      .pan-fill {
-        fill: var(--app-primary-color);
+      coating-pan-graphic {
+        --pan-size: 196px;
       }
     </style>
     
@@ -74,7 +67,71 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div id='left-column'>
         
         <div class='card'>
-          <div class='card-title'>Tablet Outline</div>
+          <div class='card-title'>Density vs Volume</div>
+          <canvas id='chart'></canvas>
+        </div>
+          
+        <div class='card'>
+          <div class='card-title'>Inputs</div>
+    			</number-unit-input>
+					<number-unit-input
+      	  	title='Bulk Density' 
+    			  value='[[density]]' 
+    			  type='density' 
+    			  selected-units='g/ml'
+    			  details='The bulk denisty of batch'
+      	  	on-value-changed='densityChanged'>
+    			</number-unit-input>
+      	  <number-unit-input 
+    				title='Weight' 
+    				value='[[weight]]' 
+    				type='weight' 
+    				selected-units='kg' 
+    				details='The weight of material to coat' 
+    				on-value-changed='weightChanged'>
+        </div>
+        
+        <div class='card'>
+          <div class='card-title'>Calculations</div>
+					<number-unit-input
+					  no-input
+      	  	title='Tablet Count' 
+    			  value='[[tabletCount]]' 
+    			  type='' 
+    			  selected-units='tabs'
+    			  details='The number of tablets in the batch'>
+    			</number-unit-input>
+    			<number-unit-input 
+      	    no-input
+    				title='Surface Area' 
+    				value='[[surfaceArea]]' 
+    				type='volume' 
+    				selected-units='m2' 
+    				details='The volume of the batch'>
+    			</number-unit-input>
+    			<number-unit-input 
+      	    no-input
+    				title='Volume' 
+    				value='[[volume]]' 
+    				type='volume' 
+    				selected-units='l' 
+    				details='The volume of the batch'>
+    			</number-unit-input>
+        </div>
+			  
+      </div>
+      
+      <div id='right-column'>
+        
+        <div class='highlight-card'>
+          <div class='card-title'>Batch Recommendation</div>
+          <div class='card-text'>
+            Based on the current bulk density get the optimal batch weight for the coating pan.
+          </div>
+          <paper-button class='highlight-button' on-tap='recommendWeight'>Recommend</paper-button>
+        </div>
+        <div class='card'>
+          <div class='card-title'>Pan Fill</div>
           <div id='graphic-container'>
             
             <coating-pan-graphic
@@ -101,47 +158,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             
           </div>
         </div>
-          
         <div class='card'>
-          <div class='card-title'>Inputs</div>
-      	  <number-unit-input 
-    				title='Weight' 
-    				value='[[weight]]' 
-    				type='weight' 
-    				selected-units='{{weightUnits}}' 
-    				details='The weight of material to coat' 
-    				on-value-changed='weightChanged'>
-    			</number-unit-input>
+          <div class='card-title'>Pan Fill Calculations</div>
 					<number-unit-input
-      	  	title='Bulk Density' 
-    			  value='[[density]]' 
-    			  type='density' 
-    			  selected-units='g/ml'
-    			  details='The bulk denisty of batch'
-      	  	on-value-changed='densityChanged'>
+					  no-input
+      	  	title='Fill Height' 
+    			  value='[[fillHeight]]' 
+    			  type='length' 
+    			  selected-units='{{lengthUnits}}'
+    			  details='The maximum bed height'>
+    			</number-unit-input>
+    			<number-unit-input
+					  no-input
+      	  	title='Fill to Brim' 
+    			  value='[[fillToBrim]]' 
+    			  type='length' 
+    			  selected-units='{{lengthUnits}}'
+    			  details='The distance between the product bed and the brim opening'>
+    			</number-unit-input>
+    		<number-unit-input
+					  no-input
+      	  	title='Fill Width' 
+    			  value='[[fillWidth]]' 
+    			  type='length' 
+    			  selected-units='{{lengthUnits}}'
+    			  details='The maximum width of the product bed on the surface'>
     			</number-unit-input>
         </div>
-			  
-      </div>
-      
-      <div id='right-column'>
-        
-        <div class='highlight-card'>
-          <div class='card-title'>Batch Recommendation</div>
-          <div class='card-text'>
-            Based on the current bulk density get the optimal batch weight for the coating pan.
-          </div>
-          <paper-button class='highlight-button' on-tap='recommendWeight'>Recommend</paper-button>
-        </div>
-        
-      <!--  <div class='card'>-->
-      <!--    <div class='card-title'>Information</div>-->
-      <!--    <text-input title='Product' value='[[productName]]' on-value-changed=''></text-input>-->
-      <!--    <text-input title='Formulation' value='[[formulationName]]' on-value-changed=''></text-input>-->
-      <!--    <text-input title='Tooling' value='[[toolingName]]' on-value-changed=''></text-input>-->
-      <!--    <text-input title='Company' value='[[companyName]]' on-value-changed=''></text-input>-->
-      <!--  </div>-->
-      <!--</div>-->
     </div>
   </template>
 
@@ -150,8 +193,73 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
       static get is() { return 'batch-page'; }
       
+      ready() {
+        super.ready();
+        this.chart = new Chart(this.$.chart, {
+            type: 'line',
+            data: {
+              datasets: [
+                {
+                  fill: false,
+                  pointRadius: 0,
+                  borderWidth: 36,
+                  borderCapStyle: 'round',
+                  data: [{x:0, y:0}]
+                }, 
+                {
+                  fill: false,
+                  pointRadius: 6,
+                  pointBackgroundColor: '#2980b9',
+                  data: [{x:0, y:0}]
+                }
+              ],
+            },
+            options: {
+              // maintainAspectRatio: false,
+              legend: {
+                  display: false
+              },
+              tooltips: {
+                  enabled: false
+              },
+              hover: {
+                  mode: ''
+              },
+              scales: {
+                xAxes: [{
+                  type: 'linear',
+                  ticks: {
+                    min: 0,
+                    max: 2,
+                    fixedStepSize: 0.25
+                  }, 
+                  position: 'bottom',
+                  
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Density (g/ml)'
+                  }
+                }], 
+                yAxes: [{
+                  type: 'linear',
+                  ticks: {
+                    min: 0, 
+                  }, 
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Volume (liters)'
+                  }
+                }]
+              }
+          }
+        });
+      }
+      
       static get properties() {
         return {
+          chart: {
+            type: Object
+          },
           weight: {
             type: Number,
             statePath: 'batch.weight',
@@ -170,17 +278,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           tabletCount: {
             type: Number,
-            statePath: 'batch.tabletCount'
+            statePath: 'batch.count'
+          },
+          surfaceArea: {
+            type: Number,
+            statePath: 'batch.surfaceArea'
           },
           maxFillVolume: {
             type: Number,
             statePath: 'pan.maxFillVolume'
           },
-          weightUnits: {
-            type: String,
-            value: 'kg'
-          },
-          
           panDiameter: {
             type: Number,
             statePath: 'pan.panDiameter'
@@ -209,7 +316,53 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: Number,
             statePath: 'pan.fillLength'
           },
+          fillToBrim: {
+            type: Number,
+            statePath: 'pan.fillToBrim'
+          },
+          lengthUnits: {
+            type: String,
+            value: 'in'
+          }
         };
+      }
+      
+      static get observers() {
+        return [
+          'updateDensityChartTrendLine(weight, chart)',
+          'updateDensityChartPoint(density, volume, chart)'
+        ];
+      }
+      updateDensityChartTrendLine(weight, chart) {
+        if(!chart) {
+            return;
+        }
+        
+        // max and min density are set at 0.5 and 1.5 g/ml 
+        let maxDensity = 1.5;
+        let minDensity = 0.5;
+        
+        // empty array to hold the x,y points for the line chart
+        var vals = [];
+        
+        for (var i=minDensity; i<=maxDensity; i+=0.01){
+        	let volume = weight / i / 1000;
+        	let v = {};
+        	v.x = i;
+        	v.y = volume;
+        	vals.push(v);
+        }
+        
+        chart.data.datasets[0].data = vals;
+        chart.update();
+      }
+      updateDensityChartPoint(density, volume, chart) {
+          if(!chart) {
+              return;
+          }
+          chart.data.datasets[1].data[0].x = density / 1000000;
+          chart.data.datasets[1].data[0].y = volume * 1000;
+          chart.update();
       }
       
       weightChanged(e) {

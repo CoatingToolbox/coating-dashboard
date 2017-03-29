@@ -15,6 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../elements/text-input.html">
 <link rel="import" href="../elements/number-unit-input.html">
+<link rel="import" href="../elements/tablet-graphic.html">
 <link rel="import" href="../redux-mixin.html">
 <link rel="import" href="../my-icons.html">
 <link rel="import" href="shared-page-styles.html">
@@ -43,25 +44,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
     <firebase-auth id="auth" user="{{user}}"></firebase-auth>
     <firebase-query id='tabletQuery' path='/tablets'></firebase-query>
-    
-    <!--<tablet-model-->
-    <!--  shape='[[shape]]'-->
-    <!--  width='[[width]]'-->
-    <!--  length='[[length]]'-->
-    <!--  weight='[[weight]]'-->
-    <!--  band-thickness='[[bandThickness]]'-->
-    <!--  total-thickness='[[totalThickness]]'-->
-    <!--  compressed-density='{{compressedDensity}}'-->
-    <!--  total-volume='{{totalVolume}}'-->
-    <!--  total-area='{{totalArea}}'-->
-    <!--  cup-thickness='{{cupThickness}}'-->
-    <!--  cup-area='{{cupArea}}'-->
-    <!--  cup-volume='{{cupVolume}}'-->
-    <!--  path-top-tablet='{{pathTopTablet}}'-->
-    <!--  path-length-side-tablet='{{pathLengthSideTablet}}'-->
-    <!--  path-width-side-tablt='{{pathWidthSideTablet}}'>-->
-    <!--</tablet-model>-->
-      
     
     <div id='header-container'>
       <div id='header-card'>
@@ -98,17 +80,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class='card-title'>Tablet Outline</div>
           <div id='graphic-container'>
             
-            <svg class='tablet-graphic' viewbox='0 0 24 24'>
-              <path d$='[[pathTopTablet]]'></path>
-            </svg>
+            <tablet-graphic
+              top-view
+              shape='[[shape]]'
+              width='[[width]]'
+              length='[[length]]'
+              band-thickness='[[bandThickness]]'
+              cup-thickness='[[cupThickness]]'>
+            </tablet-graphic>
             
-            <svg class='tablet-graphic' viewbox='0 0 24 24'>
-              <path d$='[[pathLengthSideTablet]]'></path>
-            </svg>
+            <tablet-graphic
+              length-view
+              shape='[[shape]]'
+              width='[[width]]'
+              length='[[length]]'
+              band-thickness='[[bandThickness]]'
+              cup-thickness='[[cupThickness]]'>
+            </tablet-graphic>
             
-            <svg hidden$='[[isRound(shape)]]' class='tablet-graphic' viewbox='0 0 24 24'>
-              <path d$='[[pathWidthSideTablet]]'></path>
-            </svg>
+            <tablet-graphic
+              width-view
+              hidden$='[[isRound(shape)]]'
+              shape='[[shape]]'
+              width='[[width]]'
+              length='[[length]]'
+              band-thickness='[[bandThickness]]'
+              cup-thickness='[[cupThickness]]'>
+            </tablet-graphic>
             
           </div>
         </div>

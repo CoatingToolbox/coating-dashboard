@@ -4,15 +4,20 @@
         constructor(weight = 120000, density = 760000) {
             this.weight = weight;
             this.density = density;
-            this.tabletWeight = 0.400;
+            this.tabletWeight = 1;
+            this.tabletSurfaceArea = 1;
         }
         
         get volume() {
             return this.weight / this.density;
         }
         
-        get count () {
+        get count() {
             return Math.ceil(this.weight / this.tabletWeight);
+        }
+        
+        get surfaceArea() {
+            return this.count * this.tabletSurfaceArea;
         }
     }
 </script>

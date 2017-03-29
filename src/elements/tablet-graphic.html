@@ -1,159 +1,152 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
-<dom-module id="tablet-model">
+<dom-module id="tablet-graphic">
+  <template>
+    <style>
+      
+      .tablet-graphic {
+        height: 256px;
+        width: 256px;
+        fill: var(--app-primary-color);
+        fill-opacity: 0.4;
+        stroke: var(--app-primary-color);
+        stroke-width: 0.25px;
+        stroke-linejoin: round;
+      }
+    </style>
+    
+    <template is='dom-if' if='[[topView]]'>
+      <svg class='tablet-graphic' viewbox='0 0 24 24'>
+        <path d$='[[pathTopTablet]]'></path>
+      </svg>
+    </template>
+    
+    <template is='dom-if' if='[[lengthView]]'>
+      <svg class='tablet-graphic' viewbox='0 0 24 24'>
+        <path d$='[[pathLengthSideTablet]]'></path>
+      </svg>
+    </template>
+    
+    <template is='dom-if' if='[[widthView]]'>
+      <svg class='tablet-graphic' viewbox='0 0 24 24'>
+        <path d$='[[pathWidthSideTablet]]'></path>
+      </svg>
+    </template>
+            
+  </template>
 
   <script>
   
-    class TabletModel extends Polymer.Element {
+    class TabletGraphic extends Polymer.Element {
       
-      static get is() { return 'tablet-model';}
+      static get is() { return 'tablet-graphic';}
       
-      static get properties() {
+       static get properties() {
         
         return {
-            shape: {
-              type: String
-            }, 
-            length: {
-              type: Number
-            }, 
-            width: {
-              type: Number
-            }, 
-            totalThickness: {
-              type: Number
-            }, 
-            bandThickness: {
-              type: Number
-            }, 
-            weight: {
-              type: Number
-            }, 
-            totalVolume: {
-              type: Number,
-              notify: true,
-              computed: 'computeTotalVolume(bandVolume, cupVolume)'
-            },
-            totalArea: {
-              type: Number,
-              notify: true,
-              computed: 'computeTotalArea(bandArea, cupArea)'
-            },
-            cupThickness: {
-              type: Number,
-              notify: true,
-              computed: 'computeCupThickness(totalThickness, bandThickness)'
-            },
-            bandArea: {
-              type: Number,
-              computed: "computeBandArea(perimeter, bandThickness)"
-            },
-            bandVolume: {
-              type: Number,
-              computed: 'computeBandVolume(crossSectionArea, bandThickness)'
-            },
-            compressedDensity: {
-              type: Number,
-              notify: true,
-              computed: 'computeCompressedDensity(weight, totalVolume)'
-            },
-            perimeter: {
-              type: Number,
-              computed: 'computePerimeter(shape, length, width)'
-            },
-            crossSectionArea: {
-              type: Number,
-              computed: 'computeCrossSectionArea(shape, length, width)'
-            }, 
-            cupArea: {
-              type: Number,
-              notify: true,
-              computed: 'computeCupArea(shape, length, width, cupThickness)'
-            },
-            cupVolume: {
-              type: Number,
-              notify: true,
-              computed: 'computeCupVolume(shape, length, width, cupThickness)'
-            },
-            lengthCupRadius: {
-              type: Number,
-              computed: 'computeCupRadius(length, cupThickness)'
-            },
-            widthCupRadius: {
-              type: Number,
-              computed: 'computeCupRadius(width, cupThickness)'
-            },
-            tabletSVG: {
-              type: Object,
-              notify: true,
-              value: function() {
-                return {
-                  // padding around the edge of svg
-                  padding: 1.5,
-                  
-                  // the end cap of the dimension line
-                  cap: 2,
-        
-                  //target width of svg
-                  width: 24,
-        
-                  //max length of tablet
-                  //we use 0.02 meters = 20 mm;
-                  maxLength: 0.02,
-        
-                  // scale: 1050,
-                  // the value to multiple other dimensions by to scale
-                  get scale() {
-                      return (this.width - (2 * this.padding)) / this.maxLength;;
-                  }, 
-                  
-                  // center starting point
-                  get center() {
-                      return this.width / 2;
-                  },
-                };
-              }
-            },
-            pathLengthSideTablet: {
-              type: String,
-              notify: true,
-              computed: "computePathSideTablet(shape, length, lengthCupRadius, bandThickness)"
-            },
-            pathLengthTopCup: {
-              type: String,
-              computed: 'computePathTopCup(shape, length, lengthCupRadius, bandThickness)'
-            },
-            pathLengthBottomCup: {
-              type: String,
-              computed: 'computePathBottomCup(shape, length, lengthCupRadius, bandThickness)'
-            },
-            pathLengthBand: {
-              type: String,
-              computed: 'computePathBand(shape, length, bandThickness)'
-            },
-            pathWidthSideTablet: {
-              type: String,
-              notify: true,
-              computed: "computePathSideTablet(shape, width, widthCupRadius, bandThickness)"
-            },
-            pathWidthTopCup: {
-              type: String,
-              computed: 'computePathTopCup(shape, width, widthCupRadius, bandThickness)'
-            },
-            pathWidthBottomCup: {
-              type: String,
-              computed: 'computePathBottomCup(shape, width, widthCupRadius, bandThickness)'
-            },
-            pathWidthBand: {
-              type: String,
-              computed: 'computePathBand(shape, width, bandThickness)'
-            },
-            pathTopTablet: {
-              type: String,
-              notify: true,
-              computed: 'computePathTopTablet(shape, width, length)'
+          topView: {
+            type: Boolean,
+          },
+          lengthView: {
+            type: Boolean
+          },
+          widthView: {
+            type: Boolean
+          },
+          
+          shape: {
+            type: String
+          }, 
+          length: {
+            type: Number
+          }, 
+          width: {
+            type: Number
+          }, 
+          bandThickness: {
+            type: Number
+          }, 
+          cupThickness: {
+            type: Number
+          },
+          
+          lengthCupRadius: {
+            type: Number,
+            computed: 'computeCupRadius(length, cupThickness)'
+          },
+          widthCupRadius: {
+            type: Number,
+            computed: 'computeCupRadius(width, cupThickness)'
+          },
+          tabletSVG: {
+            type: Object,
+            notify: true,
+            value: function() {
+              return {
+                // padding around the edge of svg
+                padding: 1.5,
+                
+                // the end cap of the dimension line
+                cap: 2,
+      
+                //target width of svg
+                width: 24,
+      
+                //max length of tablet
+                //we use 0.02 meters = 20 mm;
+                maxLength: 0.02,
+      
+                // scale: 1050,
+                // the value to multiple other dimensions by to scale
+                get scale() {
+                    return (this.width - (2 * this.padding)) / this.maxLength;;
+                }, 
+                
+                // center starting point
+                get center() {
+                    return this.width / 2;
+                },
+              };
             }
-          };
+          },
+          pathLengthSideTablet: {
+            type: String,
+            notify: true,
+            computed: "computePathSideTablet(shape, length, lengthCupRadius, bandThickness)"
+          },
+          pathLengthTopCup: {
+            type: String,
+            computed: 'computePathTopCup(shape, length, lengthCupRadius, bandThickness)'
+          },
+          pathLengthBottomCup: {
+            type: String,
+            computed: 'computePathBottomCup(shape, length, lengthCupRadius, bandThickness)'
+          },
+          pathLengthBand: {
+            type: String,
+            computed: 'computePathBand(shape, length, bandThickness)'
+          },
+          pathWidthSideTablet: {
+            type: String,
+            computed: "computePathSideTablet(shape, width, widthCupRadius, bandThickness)"
+          },
+          pathWidthTopCup: {
+            type: String,
+            computed: 'computePathTopCup(shape, width, widthCupRadius, bandThickness)'
+          },
+          pathWidthBottomCup: {
+            type: String,
+            computed: 'computePathBottomCup(shape, width, widthCupRadius, bandThickness)'
+          },
+          pathWidthBand: {
+            type: String,
+            computed: 'computePathBand(shape, width, bandThickness)'
+          },
+          pathTopTablet: {
+            type: String,
+            computed: 'computePathTopTablet(shape, width, length)'
+          }
+        };
           
       }
       
@@ -340,177 +333,11 @@
         let part3 = 2 * cupThickness;
         return (part1 + part2) / part3;
       }
-      computeCupVolume(shape, length, width, cupThickness) {
-        let vol;
+          
 
-        switch (shape) {
-
-            case 'round':
-                // Calculate the CUP VOLUME.
-                //The volume of (1) tablet face
-                //based on the volume of sphere section
-                //http://www.had2know.com/academics/spherical-cap-volume-surface-area-calculator.html
-                let part1 = cupThickness / 6 * Math.PI;
-                let part2 = Math.pow(length / 2, 2) * 3;
-                let part3 = Math.pow(cupThickness, 2);
-                vol = part1 * (part2 + part3);
-                break;
-
-            default:   //for both oval and caplet we use an ellipse based calculation
-                
-                //for most calculations we uses radius not diameter
-                let r1 = length / 2;
-                let r2 = width / 2;
-                let r3 = cupThickness; //not divided by 2 because it is alread a radius;
-                
-                // Calculate the CUP VOLUME.
-                //The volume of (1) tablet face
-                //we return 1/2 the cup volume of an ellipsoid
-                vol = r1 * r2 * r3 * (4 / 3) * Math.PI / 2;
-                break;
-                
-        }
-
-        return vol;
-      }
-      computeCupArea(shape, length, width, cupThickness) {
-        let area;
-
-        switch (shape) {
-
-            case 'round':
-                // Calculate the CUP SURFACE AREA
-                // which is based on the surface area of a sphere section
-                // http://www.had2know.com/academics/spherical-cap-volume-surface-area-calculator.html
-                let rad2 = Math.pow(length / 2, 2);
-                let cup2 = Math.pow(cupThickness, 2);
-                area = Math.PI * rad2 + cup2;
-                break;
-
-            default:  //for both oval and caplet we use an ellipse based model
-                //for most calculations we uses radius not diameter
-                let r1 = length / 2;
-                let r2 = width / 2;
-                let r3 = cupThickness; //not divided by 2 because it is alread a radius;
-                
-                // Calculate the CUP SURFACE AREA
-                //first calculate the surface area of (1) face
-                //based on the surface area of ellipsoid but only use half
-                let part1 = (Math.pow(r1 * r2, 1.6) + Math.pow(r1 * r3, 1.6) + Math.pow(r2 * r3, 1.6)) / 3;
-                // we divide by 2 at the end to get half the surface area
-                area = 4 * Math.PI * Math.pow(part1, 1 / 1.6) / 2;
-                break;
-        }
-
-        return area;
-      }
-      computeCrossSectionArea(shape, length, width) {
-        
-        let crossSection;
-  
-        switch (shape) {
-  
-          case 'round':
-              crossSection = Math.PI * Math.pow(length / 2, 2);
-              break;
-    
-          case 'oval':
-              //for most calculations we uses radius not diameter
-              let r1 = length / 2;
-              let r2 = width / 2;
-              // Calculate the cross sectional area and set value
-              //PI * widthRadius * lengthRadius
-              crossSection = Math.PI * r1 * r2;
-              break;
-    
-          case 'caplet':
-              // each end cap is considered a half circle and the diameter is the width of the tablet
-              // thereofre we return the area of a circle
-              // we use full circle because there are two end caps
-              let caps = Math.PI * Math.pow(width / 2, 2);
-              
-              // the surface area of the "rectanglualr" mid section;
-              // subtract our the width because this is the end caps;
-              let rect = width * (length - width);
-              
-              // bring the values together for the total area
-              crossSection = caps + rect;
-    
-              break;
-        }
-
-        return crossSection;
-      }
-      computePerimeter(shape, length, width) {
-        let perimeter;
-
-        switch (shape) {
-
-          case 'round':
-              perimeter = length * Math.PI;
-              break;
-  
-          case 'oval':
-              // Calculate the cup perimeters and set the value;
-  
-              //for most calculations we uses radius not diameter
-              let r1 = length / 2;
-              let r2 = width / 2;
-  
-              //circum of ellipse is estiamted first
-              //using ramanujan approximation of the circumference
-              // https://en.wikipedia.org/wiki/Ellipse#Equations
-              // 3(a + b)
-              let part1 = (r1 + r2) * 3;
-              // 10 * a * b
-              let part2 = r1 * r2 * 10;
-              // 3 (a2 + b2)
-              let part3 = 3 * (Math.pow(r1, 2) + Math.pow(r2, 2));
-              //bring together terms under sqrt and take sqrt
-              let part4 = Math.sqrt(part2 + part3);
-              // PI * 3(a + b) - sqrt term
-              perimeter = Math.PI * (part1 - part4);
-              break;
-  
-          case 'caplet':
-              // each arc at the end is half circle. return the periemter of a sphere
-              // with a diameter equal to the width the of the tablet.
-              let caps = Math.PI * width;
-              
-              // the length of the flat edge
-              // the radius of the end cap is equal to the half the width of the tablet
-              // remove a full width for both end caps
-              // we have two sides so multiply by 2
-              let sides = (length - width) * 2;
-              
-              perimeter = caps + sides;
-              break;
-        }
-        
-        return perimeter;
-      }
-      computeCompressedDensity(weight, totalVolume) {
-        return weight / totalVolume;
-      }
-      computeBandVolume(crossSectionArea, bandThickness) {
-        return crossSectionArea * bandThickness;
-      }
-      computeBandArea(perimeter, bandThickness) {
-        return perimeter * bandThickness;
-      }
-      computeCupThickness(totalThickness, bandThickness) {
-        return (totalThickness - bandThickness) / 2;
-      }
-      computeTotalArea(bandArea, cupArea) {
-        return bandArea + cupArea * 2;
-      }
-      computeTotalVolume(bandVolume, cupVolume) {
-        return bandVolume + cupVolume * 2;
-      }
-      
     }
     
-    window.customElements.define(TabletModel.is, TabletModel);
+    window.customElements.define(TabletGraphic.is,TabletGraphic);
     
   </script>
 
