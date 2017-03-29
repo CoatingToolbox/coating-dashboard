@@ -21,6 +21,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href='redux-mixin.html'>
+<link rel="import" href='elements/coating-pan-model.html'>
 
 <link rel="import" href="my-icons.html">
 
@@ -85,7 +87,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         route="{{route}}"
         pattern="/:page"
         data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
+        tail="{{subroute}}">
+    </app-route>
+    
+    <coating-pan-model></coating-pan-model>
 
     <app-drawer-layout fullbleed force-narrow>
       <!-- Drawer content -->
@@ -93,6 +98,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="tablet" href="#/tablet">Tablet</a>
+          <a name="tablet" href="#/batch">Batch</a>
           <a name="coating-pan" href="#/coating-pan">Coating Pan</a>
         </iron-selector>
       </app-drawer>
@@ -115,6 +121,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <coating-pan-page name='coating-pan'></coating-pan-page>
           <coating-pan-library-page name='coating-pan-library'></coating-pan-library-page>
           <tablet-page name='tablet'></tablet-page>
+          <batch-page name='batch'></batch-page>
         </iron-pages>
         
       </app-header-layout>
@@ -122,7 +129,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    class MyApp extends Polymer.Element {
+    class MyApp extends CoatingDashboard.ReduxMixin(Polymer.Element) {
 
       static get is() { return 'my-app'; }
 
@@ -132,7 +139,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: String,
             reflectToAttribute: true,
             observer: '_pageChanged',
-          },
+          }
         };
       }
 

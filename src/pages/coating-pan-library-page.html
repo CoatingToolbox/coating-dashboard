@@ -14,10 +14,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<!--<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">-->
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../elements/number-unit-input.html">
-<link rel="import" href="../mixins/redux-mixin.html">
+<link rel="import" href="../redux-mixin.html">
 <link rel="import" href="../my-icons.html">
 
 <dom-module id="coating-pan-library-page">
@@ -70,7 +69,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         border-radius: 4px;
         background-color: white;
         max-width: calc(960px + 16px + 16px);
-        margin: 0px auto;
+        margin: 0px auto 36px auto;
+      }
+      .table-title {
+        @apply --paper-font-body2;
+        padding: 16px 0px 0px 24px;
+        text-transform: uppercase;
+        color: var(--app-primary-color);
       }
       .table {
         width: 100%;
@@ -142,7 +147,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     
     <firebase-auth id="auth" user="{{user}}"></firebase-auth>
-    <firebase-query id='panQuery' path='/pans' data='{{pans}}'></firebase-query>
+    <firebase-query path='/pans/default' data='{{defaultPans}}'></firebase-query>
     
     <div id='header'>
       <div class='card'>
@@ -157,10 +162,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </div>
     
     <div class='card-table'>
+        <div class='table-title'>Generic Coating Pan</div>
       <table class='table'>
         <thead>
           <tr>
-            <!--<th class='checkbox'></th>-->
             <th class='text'>Equipment Name</th>
             <th class='text'>Nickname</th>
             <th class='text'>Company</th>
@@ -170,20 +175,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </tr>
         </thead>
         <tbody>
-          <template is='dom-repeat' items='[[pans]]'>
+          <template is='dom-repeat' items='[[defaultPans]]'>
             <tr>
-              <!--<td class='checkbox'>-->
-              <!--  <paper-checkbox on-tap='_clearOtherCheckboxes'></paper-checkbox>-->
-              <!--</td>-->
               <td class='text'>[[item.vendorName]] [[item.equipmentName]]</td>
               <td class='text'>[[item.nickname]]</td>
               <td class='text'>[[item.companyName]] [[item.locationName]]</td>
-              <td class='numeric'>[[_converToInches(item.panDiameter)]]</td>
-              <td class='numeric'>[[_convertToLiters(item.calculatedMinFillVolume)]] to [[_convertToLiters(item.calculatedMaxFillVolume)]]</td>
+              <td class='numeric'>[[converToInches(item.panDiameter)]]</td>
+              <td class='numeric'>[[convertToLiters(item.calculatedMinFillVolume)]] to [[convertToLiters(item.calculatedMaxFillVolume)]]</td>
               <td class='icon'>
                 <div class='icons-container'>
-                  <paper-icon-button icon='my-icons:load' on-tap='_loadPan'></paper-icon-button>
-                  <paper-icon-button icon='my-icons:delete' on-tap='_removePan'></paper-icon-button>
+                  <paper-icon-button icon='my-icons:load' on-tap='loadPan'></paper-icon-button>
                 </div>
               </td>
             </tr>
@@ -195,7 +196,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    class CoatingPanLibraryPage extends ReduxMixin(Polymer.Element) {
+    class CoatingPanLibraryPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
       
       static get is() { return 'coating-pan-library-page'; }
       
@@ -204,21 +205,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           user: {
             type: Object
           },
-          pans: {
+          defaultPans: {
             type: Array,
-          },
+          }
         };
       }
       
-      _convertToLiters(val) {
+      convertToLiters(val) {
         return (val / 0.001 ).toFixed(0);
       }
       
-      _converToInches(val) {
+      converToInches(val) {
         return (val * 39.37).toFixed(1);
       }
       
-      _loadPan(e) {
+      loadPan(e) {
         this.dispatch({
           type: 'LOAD_PAN',
           value: e.model.item
@@ -226,8 +227,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.location = '#/coating-pan';
       }
       
-      _removePan(e) {
-        this.$.panQuery.ref.child(e.model.item.$key).remove();
+      removePan(e) {
+        this.$.customPanQuery.ref.child(e.model.item.$key).remove();
       }
       
     }

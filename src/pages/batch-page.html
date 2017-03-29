@@ -1,0 +1,261 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../elements/text-input.html">
+<link rel="import" href="../elements/number-unit-input.html">
+<link rel="import" href="../elements/coating-pan-graphic.html">
+<link rel="import" href="../redux-mixin.html">
+<link rel="import" href="../my-icons.html">
+<link rel="import" href="shared-page-styles.html">
+
+<dom-module id="batch-page">
+  <template>
+    <style include='shared-page-styles'>
+      :host {
+        --app-primary-color: #00897b;
+      }
+    
+      #graphic-container {
+        display: flex;
+        justify-content: space-around;
+      }
+      .pan-graphic {
+        height: 256px;
+        width: 256px;
+        fill: var(--text-secondary-color);
+        fill-opacity: 0.4;
+        stroke: var(--text-primary-color);
+        stroke-width: 0.25px;
+        stroke-linejoin: round;
+      }
+      .pan-fill {
+        fill: var(--app-primary-color);
+      }
+    </style>
+    
+    <div id='header-container'>
+      <div id='header-card'>
+        <div id='header-subhead'>Material</div>
+        <div id='header-title'>Batch</div>
+        <div id='header-text'>
+          Choose your batch size and see how it effect the pan fill. Or
+    	    click "Recommend" to be give the optimal batch size for the coating pan.
+        </div>
+      </div>
+    </div>
+    
+    <!--<div class='warning-chip' hidden=''>-->
+    <!--  <iron-icon icon='my-icons:warning'></iron-icon>-->
+    <!--  <div class='warning-text'>-->
+    <!--    Batch Volume exceed maximum working volume. Considering lower batch size or choosing a bigger coating pan.-->
+    <!--  </div>-->
+    <!--</div>-->
+    
+    <!--<div class='warning-chip'>-->
+    <!--  <iron-icon icon='my-icons:warning'></iron-icon>-->
+    <!--  <div class='warning-text'>-->
+    <!--    Looks like you are creating a custom coating pan. Save it to reference it again later.-->
+    <!--  </div>-->
+    <!--  <paper-button on-tap='_saveCoatingPan'>Save</paper-button>-->
+    <!--</div>-->
+    
+    <div id='main-container'>
+      
+      <div id='left-column'>
+        
+        <div class='card'>
+          <div class='card-title'>Tablet Outline</div>
+          <div id='graphic-container'>
+            
+            <coating-pan-graphic
+              front-view
+              pan-diameter='[[panDiameter]]'
+              opening-diameter='[[openingDiameter]]'
+              wall-width='[[wallWidth]]'
+              brim-width='[[brimWidth]]'
+              fill-height='[[fillHeight]]'
+              fill-width='[[fillWidth]]'
+              fill-length='[[fillLength]]'>
+            </coating-pan-graphic>
+            
+            <coating-pan-graphic
+              side-view
+              pan-diameter='[[panDiameter]]'
+              opening-diameter='[[openingDiameter]]'
+              wall-width='[[wallWidth]]'
+              brim-width='[[brimWidth]]'
+              fill-height='[[fillHeight]]'
+              fill-width='[[fillWidth]]'
+              fill-length='[[fillLength]]'>
+            </coating-pan-graphic>
+            
+          </div>
+        </div>
+          
+        <div class='card'>
+          <div class='card-title'>Inputs</div>
+      	  <number-unit-input 
+    				title='Weight' 
+    				value='[[weight]]' 
+    				type='weight' 
+    				selected-units='{{weightUnits}}' 
+    				details='The weight of material to coat' 
+    				on-value-changed='weightChanged'>
+    			</number-unit-input>
+					<number-unit-input
+      	  	title='Bulk Density' 
+    			  value='[[density]]' 
+    			  type='density' 
+    			  selected-units='g/ml'
+    			  details='The bulk denisty of batch'
+      	  	on-value-changed='densityChanged'>
+    			</number-unit-input>
+        </div>
+			  
+      </div>
+      
+      <div id='right-column'>
+        
+        <div class='highlight-card'>
+          <div class='card-title'>Batch Recommendation</div>
+          <div class='card-text'>
+            Based on the current bulk density get the optimal batch weight for the coating pan.
+          </div>
+          <paper-button class='highlight-button' on-tap='recommendWeight'>Recommend</paper-button>
+        </div>
+        
+      <!--  <div class='card'>-->
+      <!--    <div class='card-title'>Information</div>-->
+      <!--    <text-input title='Product' value='[[productName]]' on-value-changed=''></text-input>-->
+      <!--    <text-input title='Formulation' value='[[formulationName]]' on-value-changed=''></text-input>-->
+      <!--    <text-input title='Tooling' value='[[toolingName]]' on-value-changed=''></text-input>-->
+      <!--    <text-input title='Company' value='[[companyName]]' on-value-changed=''></text-input>-->
+      <!--  </div>-->
+      <!--</div>-->
+    </div>
+  </template>
+
+  <script>
+    class BatchPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
+      
+      static get is() { return 'batch-page'; }
+      
+      static get properties() {
+        return {
+          weight: {
+            type: Number,
+            statePath: 'batch.weight',
+          },
+          density: {
+            type: Number,
+            statePath: 'batch.density'
+          },
+          tabletWeight: {
+            type: Number,
+            statePath: 'tablet.weight'
+          },
+          volume: {
+            type: Number,
+            statePath: 'batch.volume'
+          },
+          tabletCount: {
+            type: Number,
+            statePath: 'batch.tabletCount'
+          },
+          maxFillVolume: {
+            type: Number,
+            statePath: 'pan.maxFillVolume'
+          },
+          weightUnits: {
+            type: String,
+            value: 'kg'
+          },
+          
+          panDiameter: {
+            type: Number,
+            statePath: 'pan.panDiameter'
+          },
+          openingDiameter: {
+            type: Number,
+            statePath: 'pan.openingDiameter'
+          },
+          wallWidth: {
+            type: Number,
+            statePath: 'pan.wallWidth'
+          },
+          brimWidth: {
+            type: Number,
+            statePath: 'pan.brimWidth'
+          },
+          fillWidth: {
+            type: Number,
+            statePath: 'pan.fillWidth'
+          },
+          fillHeight: {
+            type: Number,
+            statePath: 'pan.fillHeight'
+          },
+          fillLength: {
+            type: Number,
+            statePath: 'pan.fillLength'
+          },
+        };
+      }
+      
+      static get observers() {
+        return [
+          'setVolume(weight, density)',
+          'setTabletCount(weight, tabletWeight)'
+        ];
+      }
+      
+      setVolume(weight, density) {
+        let vol = weight / density;
+        this.dispatch({
+          type: 'SET_BATCH_VOLUME',
+          value: vol
+        });
+      }
+      setTabletCount(batch, tablet) {
+        let count = Math.ceil(batch / tablet);
+        this.dispatch({
+          type: 'SET_BATCH_TABLET_COUNT',
+          value: count
+        });
+      }
+      
+      weightChanged(e) {
+        this.dispatch({
+          type: 'SET_BATCH_WEIGHT',
+          value: e.detail.value
+        });
+      }
+      densityChanged(e) {
+        this.dispatch({
+          type: 'SET_BATCH_DENSITY',
+          value: e.detail.value
+        });
+      }
+      
+      recommendWeight() {
+        this.dispatch({
+				  type: 'SET_BATCH_WEIGHT', 
+				  value: this.maxFillVolume * this.density
+			  });
+      }
+      
+    }
+
+    window.customElements.define(BatchPage.is, BatchPage);
+  </script>
+</dom-module>

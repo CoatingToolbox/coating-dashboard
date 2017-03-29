@@ -13,9 +13,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
-<link rel="import" href="../mixins/tablet-mixin.html">
 <link rel="import" href="../elements/text-input.html">
 <link rel="import" href="../elements/number-unit-input.html">
+<link rel="import" href="../elements/tablet-model.html">
+<link rel="import" href="../redux-mixin.html">
 <link rel="import" href="../my-icons.html">
 <link rel="import" href="shared-page-styles.html">
 
@@ -44,6 +45,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <firebase-auth id="auth" user="{{user}}"></firebase-auth>
     <firebase-query id='tabletQuery' path='/tablets'></firebase-query>
     
+    <tablet-model
+      shape='[[shape]]'
+      width='[[width]]'
+      length='[[length]]'
+      weight='[[weight]]'
+      band-thickness='[[bandThickness]]'
+      total-thickness='[[totalThickness]]'
+      compressed-density='{{compressedDensity}}'
+      total-volume='{{totalVolume}}'
+      total-area='{{totalArea}}'
+      cup-thickness='{{cupThickness}}'
+      cup-area='{{cupArea}}'
+      cup-volume='{{cupVolume}}'
+      path-top-tablet='{{pathTopTablet}}'
+      path-length-side-tablet='{{pathLengthSideTablet}}'
+      path-width-side-tablt='{{pathWidthSideTablet}}'>
+    </tablet-model>
+      
+    
     <div id='header-container'>
       <div id='header-card'>
         <div id='header-subhead'>Material</div>
@@ -68,7 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <!--  <div class='warning-text'>-->
     <!--    Looks like you are creating a custom coating pan. Save it to reference it again later.-->
     <!--  </div>-->
-    <!--  <paper-button raised on-tap='_saveCoatingPan'>Save</paper-button>-->
+    <!--  <paper-button on-tap='_saveCoatingPan'>Save</paper-button>-->
     <!--</div>-->
     
     <div id='main-container'>
@@ -87,7 +107,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <path d$='[[pathLengthSideTablet]]'></path>
             </svg>
             
-            <svg hidden class='tablet-graphic' viewbox='0 0 24 24'>
+            <svg hidden$='[[isRound(shape)]]' class='tablet-graphic' viewbox='0 0 24 24'>
               <path d$='[[pathWidthSideTablet]]'></path>
             </svg>
             
@@ -147,7 +167,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			  value='[[totalArea]]' 
     			  type='area' 
     			  selected-units='{{areaUnits}}'
-    			  details='The estimated surface area of a single tabet'>
+    			  details='The estimated surface area of a single tabet'
+      	  	on-value-changed='surfaceAreaChanged'>
     			</number-unit-input>
     			<number-unit-input  
         	  no-input  
@@ -155,7 +176,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			  value='[[totalVolume]]' 
     			  type='volume' 
     			  selected-units='{{volumeUnits}}'
-    			  details='The estiamted volume of a single tablet'>
+    			  details='The estiamted volume of a single tablet'
+      	  	on-value-changed='volumeChanged'>
     			</number-unit-input>
     			<number-unit-input  
         	  no-input  
@@ -164,6 +186,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			  type='density' 
     			  selected-units='g/ml'
     			  details='The estiamted denisty of the compressed tablet'
+      	  	on-value-changed='compressedDensityChanged'>
     			</number-unit-input>
 			  </div>
 			  
@@ -204,7 +227,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class='card-text'>The library includes a list of coating pans with predefined measurements. The library is based on coating pans found 
           at different Colocon sites and coating pan vendor specfications. Choose one today to get started.
           </div>
-          <paper-button class='highlight-button' raised on-tap='gotoLibrary'>Library</paper-button>
+          <paper-button class='highlight-button' on-tap='gotoLibrary'>Library</paper-button>
         </div>
         
         <div class='card'>
@@ -219,7 +242,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    class TabletPage extends CoatingDashboard.TabletMixin(Polymer.Element) {
+    class TabletPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
       
       static get is() { return 'tablet-page'; }
       
@@ -227,6 +250,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return {
           user: {
             type: Object
+          },
+          shape: {
+            type: String,
+            statePath: 'tablet.shape'
+          }, 
+          length: {
+            type: Number,
+            statePath: 'tablet.length'
+          }, 
+          width: {
+            type: Number,
+            statePath: 'tablet.width'
+          }, 
+          totalThickness: {
+            type: Number,
+            statePath: 'tablet.totalThickness'
+          }, 
+          bandThickness: {
+            type: Number,
+            statePath: 'tablet.bandThickness'
+          }, 
+          weight: {
+            type: Number,
+            statePath: 'tablet.weight'
+          }, 
+          productName: {
+            type: Number,
+            statePath: 'tablet.productName'
+          }, 
+          formulationName: {
+            type: Number,
+            statePath: 'tablet.formulationName'
+          }, 
+          companyName: {
+            type: Number,
+            statePath: 'tablet.companyName'
+          }, 
+          toolingName: {
+            type: Number,
+            statePath: 'tablet.toolingName'
           },
           lengthUnits: {
             type: String,
@@ -246,6 +309,84 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         };
       }
+      shapeChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_SHAPE',
+          value: e.detail.value
+        });
+      }
+      lengthChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_LENGTH',
+          value: e.detail.value
+        });
+      }
+      widthChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_WIDTH',
+          value: e.detail.value
+        });
+      }
+      totalThicknessChanged(e){
+        this.dispatch({
+          type: 'SET_TABLET_TOTAL_THICKNESS',
+          value: e.detail.value
+        });
+      }
+      bandThicknessChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_BAND_THICKNESS',
+          value: e.detail.value
+        });
+      }
+      weightChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_WEIGHT',
+          value: e.detail.value
+        });
+      }
+      surfaceAreaChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_SURFACE_AREA',
+          value: e.detail.value
+        });
+      }
+      volumeChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_VOLUME',
+          value: e.detail.value
+        });
+      }
+      compressedDensityChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_COMPRESSED_DENSITY',
+          value: e.detail.value
+        });
+      }
+      productNameChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_PRODUCT_NAME',
+          value: e.detail.value
+        });
+      }
+      formulationNameChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET__FORMULATION_NAME',
+          value: e.detail.value
+        });
+      }
+      toolingNameChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_TOOLING_NAME',
+          value: e.detail.value
+        });
+      }
+      companyNameChanged(e) {
+        this.dispatch({
+          type: 'SET_TABLET_COMPANY_NAME',
+          value: e.detail.value
+        });
+      }
       
       gotoLibrary() {
         if(!this.user) {
@@ -257,6 +398,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       isRound(shape) {
         return (shape.toLowerCase() === 'round');
       }
+      
+      
       
     }
 

@@ -1,113 +1,74 @@
-
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="redux-mixin.html">
 
-<script>
-
-  window.CoatingDashboard = window.CoatingDashboard || {};
-
-  CoatingDashboard.CoatingPanMixin = function(superClass) { 
-    
-    return class extends CoatingDashboard.ReduxMixin(superClass) {
-      
-      constructor() {
-          super();
+<dom-module id="coating-pan-graphic">
+  <template>
+    <style>
+      .pan-graphic {
+        height: 256px;
+        width: 256px;
+        fill: var(--text-secondary-color);
+        fill-opacity: 0.4;
+        stroke: var(--text-primary-color);
+        stroke-width: 0.25px;
+        stroke-linejoin: round;
       }
+      .pan-fill {
+        fill: var(--app-primary-color);
+      }
+    </style>
+    
+    <template is='dom-if' if='[[frontView]]'>
+      <svg class='pan-graphic' viewbox='0 0 24 24'>
+        <path d$='[[pathFrontPanDiameter]]'></path>
+        <path class='pan-fill' d$='[[pathFrontFill]]'></path>
+        <path d$='[[pathFrontOpeningDiameter]]'></path>
+      </svg>
+    </template>
+    
+    <template is='dom-if' if='[[sideView]]'>
+      <svg class='pan-graphic' viewbox='0 0 24 24'>
+        <path d$='[[pathSidePan]]'></path>
+        <path class='pan-fill' d$='[[pathSideFill]]'></path>
+      </svg>
+    </template>
+    
+            
+  </template>
+
+  <script>
+  
+    class CoatingPanGraphic extends Polymer.Element {
+      
+      static get is() { return 'coating-pan-graphic';}
       
       static get properties() {
         return {
+          frontView: {
+            type: Boolean,
+          },
+          sideView: {
+            type: Boolean
+          },
           panDiameter: {
-            type: Number,
-            statePath: 'pan.panDiameter'
+            type: Number
           },
           openingDiameter: {
-            type: Number,
-            statePath: 'pan.openingDiameter'
+            type: Number
           },
           wallWidth: {
-            type: Number,
-            statePath: 'pan.wallWidth'
+            type: Number
           },
           brimWidth: {
-            type: Number,
-            statePath: 'pan.brimWidth'
-          },
-          fillVolume: {
-            type: Number,
-            statePath: 'pan.fillVolume'
-          },
-          vendorName: {
-            type: String,
-            statePath: 'pan.vendorName'
-          },
-          equipmentName: {
-            type: String,
-            statePath: 'pan.equipmentName'
-          },
-          nickname: {
-            type: String,
-            statePath: 'pan.nickname'
-          },
-          companyName: {
-            type: String,
-            statePath: 'pan.companyName'
-          },
-          locationName: {
-            type: String,
-            statePath: 'pan.locationName'
-          },
-          
-          brimHeight: {
-            type: Number,
-            computed: 'computeBrimHeight(panDiameter, openingDiameter)'
-          },
-          brimLength: {
-            type: Number,
-            computed: 'computeBrimLength(panDiameter, brimHeight)'
-          },
-          sideWallSlope: {
-            type: Number,
-            computed: 'computeSideWallSlope(brimHeight, brimWidth, wallWidth)'
-          },
-          brimVolume: {
-            type: Number,
-            computed: 'computeVolume(brimHeight, wallWidth, panDiameter, sideWallSlope)'
-          },
-          maxFillHeight: {
-            type: Number,
-            computed: 'computeMaxFillHeight(brimHeight)'
-          },
-          minFillHeight: {
-            type: Number,
-            computed: 'computeMinFillHeight(brimHeight)'
-          },
-          maxFillVolume: {
-            type: Number,
-            computed: 'computeVolume(maxFillHeight, wallWidth, panDiameter, sideWallSlope)'
-          },
-          minFillVolume: {
-            type: Number,
-            computed: 'computeVolume(minFillHeight, wallWidth, panDiameter, sideWallSlope)'
-          },
-          fillWidth: {
-            type: Number,
-            computed: 'computeFillWidth(fillHeight, sideWallSlope, wallWidth)'
-          },
-          fillToBrim: {
-            type: Number,
-            computed: 'computeFillToBrim(fillHeight, brimHeight)'
+            type: Number
           },
           fillHeight: {
-            type: Number,
-            computed: 'computeFillHeight(brimHeight, panDiameter, wallWidth, sideWallSlope, fillVolume)'
+            type: Number
           },
           fillLength: {
-            type: Number,
-            computed: 'computeFillLength(panDiameter, fillHeight)'
+            type: Number
           },
-          sideWallLength: {
-            type: Number,
-            computed: 'computeSideWallLength(brimWidth, wallWidth, brimHeight)'
+          fillWidth: {
+            type: Number
           },
           
           svg: {
@@ -143,10 +104,10 @@
             type: String,
             computed: 'getSidePan(panDiameter, openingDiameter, wallWidth, brimWidth)'
           },
-          pathSideWidthLine: {
-            type: String,
-            computed: 'getSideWidthLine(panDiameter, brimWidth)'
-          },
+          // pathSideWidthLine: {
+          //   type: String,
+          //   computed: 'getSideWidthLine(panDiameter, brimWidth)'
+          // },
           pathSideVolume: {
             type: String,
             computed: 'getSideVolume(panDiameter, openingDiameter, wallWidth, brimWidth)'
@@ -159,49 +120,49 @@
             type: String,
             computed: 'getFrontPan(openingDiameter)'
           },
-          pathFrontPanDiameterLine: {
-            type: String,
-            computed: 'getFrontPanDiameterLine(panDiameter)'
-          },
-          pathFrontOpeningDiameterLine: {
-            type: String,
-            computed: 'getFrontOpeningDiameterLine(openingDiameter, panDiameter)'
-          },
-          pathFrontBrimHeightLine: {
-            type: String
-          },
+          // pathFrontPanDiameterLine: {
+          //   type: String,
+          //   computed: 'getFrontPanDiameterLine(panDiameter)'
+          // },
+          // pathFrontOpeningDiameterLine: {
+          //   type: String,
+          //   computed: 'getFrontOpeningDiameterLine(openingDiameter, panDiameter)'
+          // },
+          // pathFrontBrimHeightLine: {
+          //   type: String
+          // },
           pathFrontFill: {
             type: String,
             computed: 'getFrontFill(panDiameter, fillHeight)'
           },
-          pathFrontFillHeightLine: {
-            type: Number,
-            computed: 'getFrontFillHeightLine(panDiameter, fillHeight)'
-          },
-          pathFrontFillBrimLine: {
-            type: Number,
-            computed: 'getFrontFillBrimLine(panDiameter, openingDiameter, fillHeight)'
-          },
-          pathFrontFillLengthLine: {
-            type: Number,
-            computed: 'getFrontFillLengthLine(panDiameter, fillLength)'
-          },
+          // pathFrontFillHeightLine: {
+          //   type: Number,
+          //   computed: 'getFrontFillHeightLine(panDiameter, fillHeight)'
+          // },
+          // pathFrontFillBrimLine: {
+          //   type: Number,
+          //   computed: 'getFrontFillBrimLine(panDiameter, openingDiameter, fillHeight)'
+          // },
+          // pathFrontFillLengthLine: {
+          //   type: Number,
+          //   computed: 'getFrontFillLengthLine(panDiameter, fillLength)'
+          // },
           pathSideFill: {
             type: Number,
             computed: 'getSideFill(panDiameter, openingDiameter, wallWidth, brimWidth, fillHeight)'
           },
-          pathSideFillWidthLine: {
-            type: Number,
-            computed: 'getSideFillWidthLine(panDiameter, fillWidth)'
-          },
-          pathSideFillBrimLine: {
-            type: Number,
-            computed: 'getSideFillBrimLine(fillWidth, panOpening, brimWidth)'
-          },
-          pathSideFillHeightLine: {
-            type: Number,
-            computed: 'getSideFillHeightLine(panDiameter, fillHeight, brimDepth)'
-          }
+          // pathSideFillWidthLine: {
+          //   type: Number,
+          //   computed: 'getSideFillWidthLine(panDiameter, fillWidth)'
+          // },
+          // pathSideFillBrimLine: {
+          //   type: Number,
+          //   computed: 'getSideFillBrimLine(fillWidth, panOpening, brimWidth)'
+          // },
+          // pathSideFillHeightLine: {
+          //   type: Number,
+          //   computed: 'getSideFillHeightLine(panDiameter, fillHeight, brimDepth)'
+          // }
           
         };
       }
@@ -486,170 +447,10 @@
                     " m " + (svg.cap / 2) + " 0" +
                     " l " + -svg.cap + " 0";
         }
-      
-      // COMPUTED PROPERTIES FUNCTIONS
-      computeFillWidth(fillHeight, sideWallSlope, wallWidth) {
-        //the "run" or Width that we moved on one side of the pan side wall
-        let dist = fillHeight / sideWallSlope;
-        return wallWidth + dist + dist;
-      }
-      computeFillToBrim(fillHeight, brimHeight) {
-        return (fillHeight < brimHeight) ? brimHeight - fillHeight : 0;
-      }
-      computeFillHeight(brimHeight, panDiameter, wallWidth, sideWallSlope, fillVolume) {
-        //we estimate the heigh that will match our fill volume
-        let radius = panDiameter / 2;
-        for(let i=0; i<brimHeight; i = i + 0.0001){
-          let saggita = brimHeight - i;
-          let chord = this.calcChordLength(radius, saggita);
-          let volume = this.calcVolume(chord, saggita, wallWidth, radius, sideWallSlope);
-          if(volume <= fillVolume){
-            return saggita;
-            break;
-          }
-        }
-      }
-      computeFillLength(panDiameter, fillHeight) {
-        return this.calcChordLength(panDiameter / 2, fillHeight);
-        
-      }
-      computeSideWallLength(brimWidth, wallWidth, brimHeight) {
-        // pythogrean theroem
-        // a2 + b2 = c2
-        // run = the distance on one side
-        let a2 = Math.pow(((brimWidth - wallWidth) / 2), 2);
-        let b2 = Math.pow(brimHeight, 2);
-        return Math.sqrt(a2 + b2);
-      }
-      computeBrimHeight(pan, opening) {
-        return (pan - opening) / 2;
-      }
-      computeBrimLength(panDiameter, brimHeight) {
-        return this.calcChordLength(panDiameter / 2, brimHeight);
-      }
-      computeSideWallSlope(brimHeight, brimWidth, wallWidth) {
-        // slope = rise / run
-        // run = the distance on one side
-        return brimHeight / ((brimWidth - wallWidth) / 2);
-      }
-      computeVolume(fillHeight, wallWidth, panDiameter, sideWallSlope) {
-        //two section to get the volume
-        // 1. main cylinder along the flat pan wall
-        // 2. two maxsides along the sloped side walls
-        
-        let radius = panDiameter / 2;
-        
-        // at this height determine the width / chord;
-        let width = this.calcChordLength(radius, fillHeight);
-        
-        // to get the main cylinder volume we calculate the area of the sphere segment 
-        // times the width of the pan wall
-        let center = this.calcSphereSectionArea(radius, width, fillHeight) * wallWidth;
-        
-        //side wall volume is like a cone
-        let cone = this.calcSideWallVolume(radius, fillHeight, sideWallSlope);
-        
-        //to get the total volume we use the center and two cones;
-        // value is in meters ^3
-        return center + cone + cone;
-      }
-      computeMaxFillHeight(brimHeight) {
-        let limit = 0.0254;
-        if(brimHeight < 0.0254 * 4) {
-          limit = 0.0254 / 2;
-        }
-        return brimHeight - limit;
-      }
-      computeMinFillHeight(brimHeight) {
-        return brimHeight * 0.6;
-      }
-        
-      // HELPER FUNCTIONS
-      calcVolume(brimLength, brimHeight, wallWidth, radius, sideWallSlope) {
-        //two section to get the volume
-        // 1. main cylinder along the flat pan wall
-        // 2. two sides along the sloped side walls
-        // to get the main cylinder volume we calculate the area of the sphere segment 
-        // times the width of the pan wall
-        let center = this.calcSphereSectionArea(radius, brimLength, brimHeight) * wallWidth;
-        //side wall volume is like a cone
-        let cone = this.calcSideWallVolume(radius, brimHeight, sideWallSlope);
-        //to get the total volume we use the center and two cones;
-        // value is in meters ^3
-        return center + cone + cone;
-      }
-      calcChordLength(radius, saggita) {
-        //brim width... the chord length at the brim height
-        //typically close to the full diameter as the brim height is near the center
-        //determined from pythogrean therom of a triangle from the brim height chord and radius
-        return 2 * Math.sqrt(Math.pow(radius, 2) - Math.pow((radius - saggita), 2)); 
-      }
-      calcSphereSectionArea(radius, chord, saggita){
-        //see link for more details
-        // http://mathworld.wolfram.com/CircularSegment.html
-        
-        //the total area of a circle with the diameter
-        let fullCircleArea = Math.PI * Math.pow(radius, 2);
-        
-        //split the width in half making a right angle triangle
-        //determine the angle using sin (opposite / hypoteneus)
-        //times two since we need both sides
-        let centralAngle = 2 * Math.asin((chord / 2) / radius);
-        
-        //the area of the sphere from the central angle
-        //the central angle divided by 2 x PI in radians is the fraction of the area we need
-        // central angle is in radians
-        let sectionArea = centralAngle / (2 * Math.PI) * fullCircleArea;
-        
-        //we determine the area of a the triangle to be removed
-        // base * height / 2
-        //base is the width or brimWidth
-        // height is the radius - brimHeight aka height
-        let triangleArea = chord * (radius - saggita) / 2;
-        
-        //remove the triangle area leaving the area of the circle segment
-        return sectionArea - triangleArea;
-      }
-      calcSideWallVolume(radius, height, slope) {
-        //the volume of the side wall is estimated by using incremental
-        //distances along the side wall and calculated how the differences in height
-        
-        // create a letiable to hold total volume
-        let volume = 0;
-        
-        //the number of increments
-        let inc = 10;
-        
-        // Determine the incremental rise or height
-        let heightInc = height / inc;
-        //determine the incremental run or Width change
-        let depthInc = heightInc / slope;
-        
-        //we use small area section along the slop and add them together
-        for(let i=0; i < inc; i++) {
-          //first we correct for the new height along the side wall slope
-          
-          //this is the loss in height along the sloped side wall
-          let h = heightInc * i;
-          
-          // the new radius after we account for the change in height along the slope
-          let smallerRadius = radius - h;
-          
-          // the new saggita is also reduced by the change in height
-          let smallerSaggita = height - h;
-          
-          // next we determine the new chord length created from the smaller circle segment
-          let smallerChord = this.calcChordLength(smallerRadius, smallerSaggita);
-          
-          //from this we get the segment area 
-          let smallerArea = this.calcSphereSectionArea(smallerRadius, smallerChord, smallerSaggita);
-          
-          //we turn area into volume by multiplying by our depth increment and
-          // we add this section to the total volume
-          volume = volume + smallerArea * depthInc;
-        }
-        return volume;
-      }
-    };
-  };
-</script>
+    }
+    
+    window.customElements.define(CoatingPanGraphic.is, CoatingPanGraphic);
+    
+  </script>
+
+</dom-module>

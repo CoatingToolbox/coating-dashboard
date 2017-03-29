@@ -4,7 +4,8 @@
   "fragments": [
     "src/pages/coating-pan-page.html",
     "src/pages/coating-pan-library-page.html",
-    "src/pages/tablet-page.html"
+    "src/pages/tablet-page.html",
+    "src/pages/batch-page.html"
   ],
   "builds": [{
     "name": "bundled",

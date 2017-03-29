@@ -9,12 +9,12 @@
       openingDiameter: 0.4826,
       wallWidth: 0.508,
       brimWidth: 0.93345, 
-      fillVolume: 0.158,
+      fillVolume: 0.15789473684210525,
       locationName: '',
       companyName: '',
       equipmentName: 'Fastcoat 48"',
       vendorName: "O'Hara",
-      nickname: ''
+      nickname: '',
     },
     tablet: {
       shape: 'round',
@@ -27,6 +27,10 @@
       formulationName: 'Placebo (WP123456)',
       companyName: 'Colorcon',
       toolingName: '10mm Round'
+    },
+    batch: {
+      weight: 120000,
+      density: 760000,
     }
   };
   
@@ -78,6 +82,50 @@
       case 'SET_BATCH_VOLUME':
         pan.fillVolume = action.value;
         break;
+      
+      case 'SET_PAN_BRIM_VOLUME':
+        pan.brimVolume = action.value;
+        break;
+      
+      case 'SET_PAN_MAX_FILL_HEIGHT':
+        pan.maxFillHeight = action.value;
+        break;
+        
+      case 'SET_PAN_MIN_FILL_HEIGHT':
+        pan.minFillHeight = action.value;
+        break;
+      
+      case 'SET_PAN_MAX_FILL_VOLUME':
+        pan.maxFillVolume = action.value;
+        break;
+        
+      case 'SET_PAN_MIN_FILL_VOLUME':
+        pan.minFillVolume = action.value;
+        break;
+        
+      case 'SET_PAN_FILL_WIDTH':
+        pan.fillWidth = action.value;
+        break;
+        
+      case 'SET_PAN_FILL_TO_BRIM':
+        pan.fillToBrim = action.value;
+        break;
+        
+      case 'SET_PAN_FILL_LENGTH':
+        pan.fillLength = action.value;
+        break;
+        
+      case 'SET_PAN_FILL_HEIGHT':
+        pan.fillHeight = action.value;
+        break;
+        
+      case 'SET_PAN_BRIM_HEIGHT':
+        pan.brimHeight = action.value;
+        break;
+        
+      case 'SET_PAN_SIDE_WALL_SLOPE':
+        pan.sideWallSlope = action.value;
+        break;
         
       case 'LOAD_PAN':
         pan.panDiameter = action.value.panDiameter;
@@ -115,6 +163,18 @@
         tablet.width = action.value;
         break;
         
+      case 'SET_TABLET_VOLUME':
+        tablet.volume = action.value;
+        break;
+        
+      case 'SET_TABLET_SURFACE_AREA':
+        tablet.surfaceArea = action.value;
+        break;
+        
+      case 'SET_TABLET_COMPRESSED_DENSITY':
+        tablet.compressedDensity = action.value;
+        break;
+        
       case 'SET_TABLET_TOTAL_THICKNESS':
         tablet.totalThickness = action.value;
         break;
@@ -133,10 +193,6 @@
         
       case 'SET_TABLET_FORMULATION_NAME':
         tablet.formulationName = action.value;
-        break;
-        
-      case 'SET_TABLET_DESCRIPTION':
-        tablet.description = action.value;
         break;
         
       case 'SET_TABLET_TOOLING_NAME':
@@ -160,15 +216,45 @@
     
   };
   
+  const batchReducer = (state, action) => {
+    if(!state) {return initialState;}
+    let batch = state;
+    switch(action.type) {
+      
+      case 'SET_BATCH_WEIGHT':
+        batch.weight = action.value;
+        break;
+        
+      case 'SET_BATCH_DENSITY':
+        batch.density = action.value;
+        break;
+        
+      case 'SET_BATCH_VOLUME':
+        batch.volume = action.value;
+        break;
+      
+       case 'SET_BATCH_TABLET_COUNT':
+        batch.tabletCount = action.value;
+        break;
+        
+      default: 
+        return state;
+    }
+    return Object.assign({}, batch);
+  };
+  
   const reducer = (state = initialState, action) => {
     return {
       pan: panReducer(state.pan, action),
-      tablet: tabletReducer(state.tablet, action)
+      tablet: tabletReducer(state.tablet, action),
+      batch: batchReducer(state.batch, action)
     };
   };
   
   const store = Redux.createStore(reducer);
   
   // Create the Polymer mixin
-  ReduxMixin = PolymerRedux(store);
+  
+  window.CoatingDashboard = window.CoatingDashboard || {};
+  CoatingDashboard.ReduxMixin = PolymerRedux(store);
 </script>
