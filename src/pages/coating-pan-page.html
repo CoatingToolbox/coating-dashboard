@@ -56,10 +56,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </div>
     
-    <div class='warning-chip' hidden='[[!isOverfilled(maxFillVolume, fillVolume)]]'>
+    <div class='warning-chip' hidden='[[!isOverFilled]]'>
       <iron-icon icon='my-icons:warning'></iron-icon>
       <div class='warning-text'>
         Batch Volume exceed maximum working volume. Considering lower batch size or choosing a bigger coating pan.
+      </div>
+    </div>
+    <div class='warning-chip' hidden='[[!isUnderFilled]]'>
+      <iron-icon icon='my-icons:warning'></iron-icon>
+      <div class='warning-text'>
+        Batch Volume is below the recommended minimum working volume. Considering a higher batch size or choosing a bigger coating pan.
       </div>
     </div>
     
@@ -327,6 +333,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: Number,
             statePath: 'pan.sideWallSlope'
           },
+          isOverFilled: { type: Boolean, statePath: 'pan.isOverFilled' },
+          isUnderFilled: { type: Boolean, statePath: 'pan.isUnderFilled' },
           user: {
             type: Object
           },
@@ -397,10 +405,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       }
       
-      // HELPER FUNCTIONS
-      isOverfilled(maxFillVolume, fillVolume) {
-        return (maxFillVolume < fillVolume);
-      }
       saveCoatingPan() {
         if(!this.user) {
           this.$.auth.signInAnonymously();

@@ -101,6 +101,14 @@ class CoatingPan {
     return Math.sqrt(a2 + b2);
   }
   
+  get isUnderFilled() {
+    return (this.minFillVolume > this.fillVolume);
+  }
+  
+  get isOverFilled() {
+    return (this.maxFillVolume < this.fillVolume);
+  }
+  
   calcChordLength(radius, saggita) {
     //brim width... the chord length at the brim height
     //typically close to the full diameter as the brim height is near the center
