@@ -24,9 +24,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       :host {
         --app-primary-color: #00897b;
       }
-    
       #chart {
         margin-top: 16px;
+      }
+      iron-selector {
+        display: flex;
+      }
+      iron-selector .card-title {
+        color: var(--text-secondary-color);
+        font-weight: 200;
+        margin-right: 12px;
+        padding: 0px 4px 2px 4px;
+      }
+      iron-selector .iron-selected {
+        color: var(--text-primary-color);
+        font-weight: 500;
+        border-bottom: 2px solid var(--text-primary-color);
+      }
+      iron-selector .card-title:hover {
+        background-color: var(--app-background-color);
+        border-radius: 4px;
+      }
+      #graphic-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      coating-pan-graphic {
+        --pan-size: 196px;
       }
     </style>
     
@@ -60,7 +85,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div id='left-column'>
         
         <div class='card'>
-          <div class='card-title'>Density vs Volume</div>
+          <iron-selector selected='{{selectedChart}}'>
+            <div class='card-title'>Weight</div>
+            <div class='card-title'>Density</div>
+          </iron-selector>
           <canvas id='chart'></canvas>
         </div>
           
@@ -234,8 +262,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   type: 'linear',
                   ticks: {
                     min: 0,
-                    max: 2,
-                    fixedStepSize: 0.25
+                    // max: 2,
+                    // fixedStepSize: 0.25
                   }, 
                   position: 'bottom',
                   
@@ -264,6 +292,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           chart: {
             type: Object
           },
+          selectedChart: {type: Number, value: 0},
           weight: {
             type: Number,
             statePath: 'batch.weight',
@@ -292,6 +321,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: Number,
             statePath: 'pan.maxFillVolume'
           },
+          minFillVolume: {type: Number, statePath: 'pan.minFillVolume'},
           panDiameter: {
             type: Number,
             statePath: 'pan.panDiameter'
@@ -335,38 +365,77 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
       static get observers() {
         return [
-          'updateDensityChartTrendLine(weight, chart)',
-          'updateDensityChartPoint(density, volume, chart)'
+          'updateChartAxis(selectedChart, chart)',
+          'updateChartTrendLine(weight, density, selectedChart, chart)',
+          'updateChartPoint(weight, density, volume, selectedChart, chart)'
         ];
       }
-      updateDensityChartTrendLine(weight, chart) {
+      updateChartAxis(selectedChart, chart) {
+        if(!chart) { return; }
+        
+        let label;
+        switch(selectedChart) {
+          case 0:
+            label = 'Weight (kg)';
+            break;
+          case 1:
+            label = 'Density (g/ml)';
+            break;
+          default:
+            label ='';
+            break;
+        }
+        this.chart.options.scales.xAxes[0].scaleLabel.labelString = label;
+        this.chart.update();
+      }
+      updateChartTrendLine(weight, density, selectedChart, chart) {
         if(!chart) {
             return;
         }
         
-        // max and min density are set at 0.5 and 1.5 g/ml 
-        let maxDensity = 1.5;
-        let minDensity = 0.5;
+        let vals = [];
         
-        // empty array to hold the x,y points for the line chart
-        var vals = [];
-        
-        for (var i=minDensity; i<=maxDensity; i+=0.01){
-        	let volume = weight / i / 1000;
-        	let v = {};
-        	v.x = i;
-        	v.y = volume;
-        	vals.push(v);
+        switch(selectedChart) {
+          case 0:
+            let minWeight = this.minFillVolume * density / 1000;
+            vals.push({x: minWeight, y: this.minFillVolume * 1000});
+            
+            let maxWeight = this.maxFillVolume * density / 1000;
+            vals.push({x: maxWeight, y: this.maxFillVolume * 1000});
+            break;
+          
+          case 1:
+            // max and min density are set at 0.6 and 1.2 g/ml 
+            let maxDensity = 1.2;
+            let minDensity = 0.6;
+            
+            for (var i=minDensity; i<=maxDensity; i+=0.01){
+            	let volume = weight / i / 1000;
+            	let v = {};
+            	v.x = i;
+            	v.y = volume;
+            	vals.push(v);
+            }
+            break;
         }
         
         chart.data.datasets[0].data = vals;
         chart.update();
       }
-      updateDensityChartPoint(density, volume, chart) {
+      updateChartPoint(weight, density, volume, selectedChart, chart) {
           if(!chart) {
               return;
           }
-          chart.data.datasets[1].data[0].x = density / 1000000;
+          switch(selectedChart) {
+            case 0:
+              chart.data.datasets[1].data[0].x = weight / 1000;
+              break;
+              
+            case 1:
+              chart.data.datasets[1].data[0].x = density / 1000000;
+              break;
+          }
+          
           chart.data.datasets[1].data[0].y = volume * 1000;
           chart.update();
       }
