@@ -25,14 +25,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --app-primary-color: #00897b;
       }
     
-      #graphic-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center
-        /*justify-content: space-around;*/
-      }
-      coating-pan-graphic {
-        --pan-size: 196px;
+      #chart {
+        margin-top: 16px;
       }
     </style>
     
@@ -52,14 +46,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <!--  <div class='warning-text'>-->
     <!--    Batch Volume exceed maximum working volume. Considering lower batch size or choosing a bigger coating pan.-->
     <!--  </div>-->
-    <!--</div>-->
-    
-    <!--<div class='warning-chip'>-->
-    <!--  <iron-icon icon='my-icons:warning'></iron-icon>-->
-    <!--  <div class='warning-text'>-->
-    <!--    Looks like you are creating a custom coating pan. Save it to reference it again later.-->
-    <!--  </div>-->
-    <!--  <paper-button on-tap='_saveCoatingPan'>Save</paper-button>-->
     <!--</div>-->
     
     <div id='main-container'>
@@ -89,6 +75,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     				selected-units='kg' 
     				details='The weight of material to coat' 
     				on-value-changed='weightChanged'>
+      	  </number-unit-input>
         </div>
         
         <div class='card'>
@@ -118,6 +105,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     				details='The volume of the batch'>
     			</number-unit-input>
         </div>
+        
+        <div class='highlight-card'>
+  		    <div class='card-title'>What's Next</div>
+  		    <div class='card-text'>With the batch size determine we can now start to prepare the 
+  		    coating dispersion. You will review the target solids content and the mixing equipment required.</div>
+  		    <paper-button class='highlight-button' on-tap='gotoNext'>
+  		      <div>Coating Dispersion</div>
+  		      <iron-icon icon='my-icons:arrow-forward'></iron-icon>
+  		    </paper-button>
+  		  </div>
 			  
       </div>
       
@@ -193,7 +190,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
       static get is() { return 'batch-page'; }
       
-      ready() {
+      connectedCallback() {
         super.ready();
         this.chart = new Chart(this.$.chart, {
             type: 'line',
@@ -209,7 +206,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 {
                   fill: false,
                   pointRadius: 6,
-                  pointBackgroundColor: '#2980b9',
+                  pointBackgroundColor: '#00897b',
                   data: [{x:0, y:0}]
                 }
               ],
@@ -385,6 +382,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			  });
       }
       
+      gotoNext() {
+        window.location = '#/coating-dispersion';
+      }
     }
 
     window.customElements.define(BatchPage.is, BatchPage);

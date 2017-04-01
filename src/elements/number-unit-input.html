@@ -16,12 +16,9 @@
       		opacity: 1;
       		transition: opacity 0.2s;
         }
-        :host(.iron-selected) {
-          background-color: var(--background-color);
-        }
         
-        :host(.iron-selected) #title{
-          color: var(--app-primary-color);
+        :host(:hover) {
+          background-color: var(--app-background-color);
         }
         
         :host([hidden]) {

@@ -1,0 +1,155 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/iron-dropdown/iron-dropdown.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+
+<dom-module id="dropdown-input">
+
+  <template>
+    
+    <style>
+        
+       :host {
+          display: block;
+          padding: 12px 16px;
+          border-radius: 4px;
+      		opacity: 1;
+      		transition: opacity 0.2s;
+        }
+        
+      :host(:hover) {
+        background-color: var(--app-background-color);
+      }
+        
+        #top-container {
+          display: flex;
+          flex-direction: row;
+        }
+        
+        #title {
+          @apply(--paper-font-subhead);
+          text-transform: capitalize;
+          padding-right: 16px;
+          flex-grow: 1;
+        }
+        
+        iron-dropdown {
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            background: white;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 186px;
+        }
+        
+        .item {
+          text-transform: capitalize;
+          @apply(--paper-font-body1);
+          color: var(--text-primary-color);
+          padding: 8px 16px;
+          height: 36px;
+          width: 100%;
+        }
+        
+        .item.iron-selected {
+          color: var(--app-primary-color);
+        }
+        
+        .dropdown-trigger {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-left: 6px;
+        }
+        
+        .selected {
+          text-transform: capitalize;
+          flex-grow: 1;
+        }
+        
+        #details {
+          @apply(--paper-font-body1);
+          color: var(--secondary-text-color); 
+        }
+        
+        #dropdown-arrow {
+          fill: var(--disabled-text-color, #9E9E9E);
+          height: 24px;
+          width: 24px;
+        }
+        
+    </style>
+    
+    <div id='top-container'>
+      
+      <div id='title'>[[title]]</div>
+      
+      <div class='dropdown-trigger' on-tap='_toggleDropdown'>
+        <div class='selected'>[[selectedItem]]</div>
+        <svg id='dropdown-arrow' viewbox='0 0 24 24'>
+          <path d="M7 10l5 5 5-5z"/>
+        </svg>
+      </div>
+    
+    </div>
+    
+    <div id='details'>[[details]]</div>  
+    
+    
+      <iron-dropdown id='dropdown' horizontal-align='right' horizontal-offset='0'>
+        <iron-selector class='dropdown-content' selected='{{selectedItem}}' attr-for-selected='unit'>
+      
+          <template is='dom-repeat' items='[[items]]'>
+              <div class='item' unit='[[item]]' on-tap='_toggleDropdown'>[[item]]</div>
+          </template>
+  
+        </iron-selector>
+      </iron-dropdown>
+    
+			
+  </template>
+
+  <script>
+  
+    class DropdownInput extends Polymer.Element {
+      
+      static get is() { return 'dropdown-input';}
+      
+      static get properties() {
+        
+        return {
+          title: {
+            type: String
+          },
+          details: {
+            type: String
+          },
+          selectedItem: {
+            type: String,
+            observer: '_selectedItemChanged'
+          },
+          items: {
+            type: Array
+          }
+        };
+      }
+      
+      _toggleDropdown() {
+        this.$.dropdown.toggle();
+      }
+      
+      _selectedItemChanged(newValue) {
+        
+        this.dispatchEvent(new CustomEvent('value-changed', {detail: {value: newValue}}));
+        
+      }
+      
+    }
+    
+    window.customElements.define(DropdownInput.is, DropdownInput);
+    
+  </script>
+
+</dom-module>

@@ -95,8 +95,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="tablet" href="#/tablet">Tablet</a>
-          <a name="tablet" href="#/batch">Batch</a>
+          <a name="coating-formulation" href="#/coating-formulation">Coating Formulation</a>
           <a name="coating-pan" href="#/coating-pan">Coating Pan</a>
+          <a name="batch" href="#/batch">Batch</a>
+          <a name="coating-dispersion" href="#/coating-dispersion">Coating Dispersion</a>
         </iron-selector>
       </app-drawer>
 
@@ -110,14 +112,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </app-toolbar>
         </app-header>
 
-        <iron-pages
-            selected="[[page]]"
-            attr-for-selected="name"
-            fallback-selection="tablet"
-            role="main">
+        <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="tablet" role="main">
+          <tablet-page name='tablet'></tablet-page>
           <coating-pan-page name='coating-pan'></coating-pan-page>
           <coating-pan-library-page name='coating-pan-library'></coating-pan-library-page>
-          <tablet-page name='tablet'></tablet-page>
           <batch-page name='batch'></batch-page>
         </iron-pages>
         

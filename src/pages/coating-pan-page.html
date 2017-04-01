@@ -123,7 +123,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     	    	on-value-changed='brimWidthChanged'>
     	    </number-unit-input>
     	    <number-unit-input 
-    	    	title='Pan Wall Depth' 
+    	    	title='Wall Depth' 
     	    	value='[[wallWidth]]' 
     	    	type='length'
     	    	details='The depth of the coating pan along the perforated pan wall'
@@ -144,8 +144,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               selected-units='{{volumeUnits}}'>
             </number-unit-input>
             <number-unit-input
-              title='Max Working Volume'
-              details='The capacity of the pan upto 1" from the brim'
+              title='Max Volume'
+              details='The max working volume determined as filled upto 1" from the brim'
               no-input 
               decimals='1' 
               value='[[maxFillVolume]]' 
@@ -153,8 +153,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               selected-units='{{volumeUnits}}'>
             </number-unit-input>
             <number-unit-input
-              title='Min Working Volume'
-              details='The capacity of the pan to be 60% full of brim height'
+              title='Min Volume'
+              details='The min working volume determined as 60% full of brim height'
               no-input 
               decimals='1' 
               value='[[minFillVolume]]' 
@@ -190,6 +190,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     	<!--		  details='The maximum width of the product bed on the surface'>-->
     	<!--		</number-unit-input>-->
      <!--   </div>-->
+     
+     <div class='highlight-card'>
+		    <div class='card-title'>What's Next</div>
+		    <div class='card-text'>With the coating pan picked out we can not determine the 
+		    amount of tablets to coat. Next we will look at some the tablets batch and determine
+		    the optimal fill for this coating pan.</div>
+		    <paper-button class='highlight-button' on-tap='gotoNext'>
+		      <div>Batch</div>
+		      <iron-icon icon='my-icons:arrow-forward'></iron-icon>
+		    </paper-button>
+		  </div>
         
       </div>
       
@@ -330,118 +341,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         };
       }
       
-      // static get observers() {
-      //   return [
-      //     'setBrimVolume(brimHeight, wallWidth, panDiameter, sideWallSlope)',
-      //     'setMaxFillVolume(maxFillHeight, wallWidth, panDiameter, sideWallSlope)',
-      //     'setMinFillVolume(minFillHeight, wallWidth, panDiameter, sideWallSlope)',
-      //     'setFillWidth(fillHeight, sideWallSlope, wallWidth)',
-      //     'setFillToBrim(fillHeight, brimHeight)',
-      //     'setFillLength(panDiameter, fillHeight)',
-      //     'setFillHeight(brimHeight, panDiameter, wallWidth, sideWallSlope, fillVolume)',
-      //     'setMaxFillHeight(brimHeight)',
-      //     'setMinFillHeight(brimHeight)',
-      //     'setBrimHeight(panDiameter, openingDiameter)',
-      //     'setSideWallSlope(brimHeight, brimWidth, wallWidth)'
-      //   ];
-      // }
-      
-      // Key properties that are shared through redux
-      // setBrimHeight(pan, opening) {
-      //   let h = (pan - opening) / 2;
-      //   this.dispatch({
-      //     type: "SET_PAN_BRIM_HEIGHT",
-      //     value: h
-      //   });
-      // }
-      // setSideWallSlope(brimHeight, brimWidth, wallWidth) {
-      //   // slope = rise / run
-      //   // run = the distance on one side
-      //   let slope = brimHeight / ((brimWidth - wallWidth) / 2);
-      //   this.dispatch({
-      //     type: "SET_PAN_SIDE_WALL_SLOPE",
-      //     value: slope
-      //   });
-      // }
-      // setBrimVolume(fillHeight, wallWidth, panDiameter, sideWallSlope) {
-      //   let vol = this.calcVolume(fillHeight, wallWidth, panDiameter, sideWallSlope);
-      //   this.dispatch({
-      //     type: "SET_PAN_BRIM_VOLUME",
-      //     value: vol
-      //   });
-      // }
-      // setMaxFillHeight(brimHeight) {
-      //   let limit = 0.0254;
-      //   if(brimHeight < 0.0254 * 4) {
-      //     limit = 0.0254 / 2;
-      //   }
-      //   let h = brimHeight - limit;
-      //   this.dispatch({
-      //     type: 'SET_PAN_MAX_FILL_HEIGHT',
-      //     value: h
-      //   });
-      // }
-      // setMinFillHeight(brimHeight) {
-      //   let h = brimHeight * 0.6;
-      //   this.dispatch({
-      //     type: 'SET_PAN_MIN_FILL_HEIGHT',
-      //     value: h
-      //   });
-      // }
-      // setMaxFillVolume(fillHeight, wallWidth, panDiameter, sideWallSlope) {
-      //   let vol = this.calcVolume(fillHeight, wallWidth, panDiameter, sideWallSlope);
-      //   this.dispatch({
-      //     type: "SET_PAN_MAX_FILL_VOLUME",
-      //     value: vol
-      //   });
-      // }
-      // setMinFillVolume(fillHeight, wallWidth, panDiameter, sideWallSlope) {
-      //   let vol = this.calcVolume(fillHeight, wallWidth, panDiameter, sideWallSlope);
-      //   this.dispatch({
-      //     type: "SET_PAN_MIN_FILL_VOLUME",
-      //     value: vol
-      //   });
-      // }
-      // setFillWidth(fillHeight, sideWallSlope, wallWidth) {
-      //   //the "run" or Width that we moved on one side of the pan side wall
-      //   let dist = fillHeight / sideWallSlope;
-      //   let width = wallWidth + dist + dist;
-      //   this.dispatch({
-      //     type: "SET_PAN_FILL_WIDTH",
-      //     value: width
-      //   });
-      // }
-      // setFillToBrim(fillHeight, brimHeight) {
-      //   let dist = (fillHeight < brimHeight) ? brimHeight - fillHeight : 0;
-      //   this.dispatch({
-      //     type: 'SET_PAN_FILL_TO_BRIM',
-      //     value: dist
-      //   });
-      // }
-      // setFillHeight(brimHeight, panDiameter, wallWidth, sideWallSlope, fillVolume) {
-      //   //we estimate the heigh that will match our fill volume
-      //   let height;
-      //   for(let i=0; i<brimHeight; i = i + 0.0001){
-      //     let saggita = brimHeight - i;
-      //     let volume = this.calcVolume(saggita, wallWidth, panDiameter, sideWallSlope);
-      //     if(volume <= fillVolume){
-      //       height = saggita;
-      //       break;
-      //     }
-      //   }
-      //   this.dispatch({
-      //     type: "SET_PAN_FILL_HEIGHT",
-      //     value: height
-      //   });
-      // }
-      // setFillLength(panDiameter, fillHeight) {
-      //   let length = this.calcChordLength(panDiameter / 2, fillHeight);
-      //   this.dispatch({
-      //     type: 'SET_PAN_FILL_LENGTH',
-      //     value: length
-      //   });
-      // }
-      
       // User input functions
       panDiameterChanged(e){
         this.dispatch({
@@ -499,100 +398,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       
       // HELPER FUNCTIONS
-      // calcVolume(brimHeight, wallWidth, panDiameter, sideWallSlope) {
-      //   //two section to get the volume
-      //   // 1. main cylinder along the flat pan wall
-      //   // 2. two maxsides along the sloped side walls
-        
-      //   let radius = panDiameter / 2;
-        
-      //   // at this height determine the width / chord;
-      //   let brimLength = this.calcChordLength(radius, brimHeight);
-        
-      //   //two section to get the volume
-      //   // 1. main cylinder along the flat pan wall
-      //   // 2. two sides along the sloped side walls
-      //   // to get the main cylinder volume we calculate the area of the sphere segment 
-      //   // times the width of the pan wall
-      //   let center = this.calcSphereSectionArea(radius, brimLength, brimHeight) * wallWidth;
-      //   //side wall volume is like a cone
-      //   let cone = this.calcSideWallVolume(radius, brimHeight, sideWallSlope);
-      //   //to get the total volume we use the center and two cones;
-      //   // value is in meters ^3
-      //   return center + cone + cone;
-      // }
-      // calcChordLength(radius, saggita) {
-      //   //brim width... the chord length at the brim height
-      //   //typically close to the full diameter as the brim height is near the center
-      //   //determined from pythogrean therom of a triangle from the brim height chord and radius
-      //   return 2 * Math.sqrt(Math.pow(radius, 2) - Math.pow((radius - saggita), 2)); 
-      // }
-      // calcSphereSectionArea(radius, chord, saggita){
-      //   //see link for more details
-      //   // http://mathworld.wolfram.com/CircularSegment.html
-        
-      //   //the total area of a circle with the diameter
-      //   let fullCircleArea = Math.PI * Math.pow(radius, 2);
-        
-      //   //split the width in half making a right angle triangle
-      //   //determine the angle using sin (opposite / hypoteneus)
-      //   //times two since we need both sides
-      //   let centralAngle = 2 * Math.asin((chord / 2) / radius);
-        
-      //   //the area of the sphere from the central angle
-      //   //the central angle divided by 2 x PI in radians is the fraction of the area we need
-      //   // central angle is in radians
-      //   let sectionArea = centralAngle / (2 * Math.PI) * fullCircleArea;
-        
-      //   //we determine the area of a the triangle to be removed
-      //   // base * height / 2
-      //   //base is the width or brimWidth
-      //   // height is the radius - brimHeight aka height
-      //   let triangleArea = chord * (radius - saggita) / 2;
-        
-      //   //remove the triangle area leaving the area of the circle segment
-      //   return sectionArea - triangleArea;
-      // }
-      // calcSideWallVolume(radius, height, slope) {
-      //   //the volume of the side wall is estimated by using incremental
-      //   //distances along the side wall and calculated how the differences in height
-        
-      //   // create a letiable to hold total volume
-      //   let volume = 0;
-        
-      //   //the number of increments
-      //   let inc = 10;
-        
-      //   // Determine the incremental rise or height
-      //   let heightInc = height / inc;
-      //   //determine the incremental run or Width change
-      //   let depthInc = heightInc / slope;
-        
-      //   //we use small area section along the slop and add them together
-      //   for(let i=0; i < inc; i++) {
-      //     //first we correct for the new height along the side wall slope
-          
-      //     //this is the loss in height along the sloped side wall
-      //     let h = heightInc * i;
-          
-      //     // the new radius after we account for the change in height along the slope
-      //     let smallerRadius = radius - h;
-          
-      //     // the new saggita is also reduced by the change in height
-      //     let smallerSaggita = height - h;
-          
-      //     // next we determine the new chord length created from the smaller circle segment
-      //     let smallerChord = this.calcChordLength(smallerRadius, smallerSaggita);
-          
-      //     //from this we get the segment area 
-      //     let smallerArea = this.calcSphereSectionArea(smallerRadius, smallerChord, smallerSaggita);
-          
-      //     //we turn area into volume by multiplying by our depth increment and
-      //     // we add this section to the total volume
-      //     volume = volume + smallerArea * depthInc;
-      //   }
-      //   return volume;
-      // }
       isOverfilled(maxFillVolume, fillVolume) {
         return (maxFillVolume < fillVolume);
       }
@@ -621,6 +426,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.$.auth.signInAnonymously();
         }
         window.location = '#/coating-pan-library';
+      }
+      gotoNext() {
+        window.location = '#/batch';
       }
       
     }
