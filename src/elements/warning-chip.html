@@ -1,0 +1,101 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../my-icons.html">
+
+<dom-module id="warning-chip">
+
+  <template>
+        
+    <style>
+        
+     :host {
+        @apply --shadow-elevation-2dp;
+        flex-grow: 1;
+        border-radius: 4px;
+        background-color: white;
+        max-width: 960px;
+        display: flex;
+        align-items: center;
+        @apply --paper-font-subhead;
+        height: 0px;
+        padding: 0px;
+        margin: 0px auto;
+        opacity: 0;
+        transition: all 0.5s;
+      }
+        
+      iron-icon {
+        color: var(--app-warning-color);
+        margin-right: 16px;
+      }
+      .warning-text {
+        flex-grow: 1;
+      }
+      :host ::slotted([button]) {
+        background-color: var(--app-primary-color);
+        color: white;
+        align-self: flex-end;
+      }
+      
+      .toast-container {
+        display: flex;
+        align-items: center;
+      }
+      
+      :host([show]) {
+        height: initial;
+        width: initial;
+        padding: 16px;
+        margin: 8px auto;
+        opacity: 1;
+        transition: all 0.5s;
+      }
+        
+    </style>
+    
+		<iron-icon icon='my-icons:warning'></iron-icon>
+    <slot></slot>
+    <slot name='button'></slot>
+    
+    <paper-toast id='toast'>
+      <div class='toast-container'>
+        <iron-icon icon='my-icons:warning'></iron-icon>
+        <div>Check warnings at top of page.</div></div>
+    </paper-toast>
+			
+  </template>
+
+  <script>
+  
+    class WarningChip extends Polymer.Element {
+      static get is() { return 'warning-chip';}
+      static get properties() {
+        return {
+          warning: {
+            type: String
+          },
+          show: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_showChanged'
+          }
+        };
+      }
+      
+      _showChanged(newValue) {
+        if(newValue) {
+          this.$.toast.open();
+        } else {
+          this.$.toast.close();
+        }
+      }
+    }
+    
+    window.customElements.define(WarningChip.is, WarningChip);
+    
+  </script>
+
+</dom-module>

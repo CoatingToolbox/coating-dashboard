@@ -10,6 +10,7 @@
       pan: new CoatingPan(), /*global CoatingPan*/
       tablet: new Tablet(), /*global Tablet*/
       batch: new Batch(), /*global Batch*/
+      user: {}
       // coating: new Coating(), /*global Coating*/
       // mixer: new Mixer() /*global Mixer*/
     };
@@ -28,8 +29,13 @@
     let pan = Object.assign(new CoatingPan(), state.pan);
     let tablet = Object.assign(new Tablet(), state.tablet);
     let batch = Object.assign(new Batch(), state.batch);
+    let user = state.user;
     
     switch(action.type) {
+      
+      case 'SET_USER':
+        user = action.value;
+        break;
     
       case 'SET_PAN_DIAMETER':
         pan.panDiameter = action.value;
@@ -150,7 +156,8 @@
     return Object.assign({}, {
       pan: pan,
       batch: batch,
-      tablet: tablet
+      tablet: tablet,
+      user: user
     });
   };
   

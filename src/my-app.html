@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
@@ -20,9 +21,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href='redux-mixin.html'>
-
 <link rel="import" href="my-icons.html">
 
 <dom-module id="my-app">
@@ -74,6 +75,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: var(--app-primary-color);
         font-weight: bold;
       }
+      
+      app-toolbar iron-icon {
+        margin: 8px;
+      }
+      
+      [hidden] {
+        display: none;
+      }
     </style>
     
     <firebase-app 
@@ -81,6 +90,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       database-url="https://coating-dashboard.firebaseio.com/"
       api-key=" AIzaSyBX4-arc-JogvP_4heFyqZBudMJY3s_KN4">
     </firebase-app>
+    <firebase-auth id="auth" user="{{user}}"></firebase-auth>
+    
     <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route
         route="{{route}}"
@@ -88,7 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         data="{{routeData}}"
         tail="{{subroute}}">
     </app-route>
-
+    
     <app-drawer-layout fullbleed force-narrow>
       <!-- Drawer content -->
       <app-drawer id="drawer" slot="drawer">
@@ -103,12 +114,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </app-drawer>
 
       <!-- Main content -->
-      <app-header-layout has-scrolling-region>
+      <app-header-layout>
 
         <app-header slot="header" fixed effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
             <div main-title>Coating Dashboard</div>
+            <iron-icon icon='my-icons:person' hidden$='[[!user]]'></iron-icon>
+            <iron-icon icon='my-icons:offline' hidden$='[[online]]'></iron-icon>
+            <iron-icon icon='my-icons:online' hidden$='[[!online]]'></iron-icon>
           </app-toolbar>
         </app-header>
 
@@ -128,9 +142,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     class MyApp extends CoatingDashboard.ReduxMixin(Polymer.Element) {
 
       static get is() { return 'my-app'; }
+      
+      constructor() {
+        super();
+      }
+      
+      connectedCallback() {
+        super.connectedCallback();
+        this.$.auth.signInAnonymously();
+      }
 
       static get properties() {
         return {
+          online: {
+            type: Boolean,
+            value: function() {
+              return window.navigator.onLine;
+            }
+          },
+          user: {type: Object, observer: '_userChanged'},
           page: {
             type: String,
             reflectToAttribute: true,
@@ -138,13 +168,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         };
       }
+      
+      _userChanged(newUser) {
+        if(!newUser) {
+          return;
+        }
+        this.dispatch({
+          type: "SET_USER",
+          value: newUser
+        });
+      }
 
       static get observers() {
         return [
           '_routePageChanged(routeData.page)',
         ];
       }
-
+      
       _routePageChanged(page) {
         // Polymer 2.0 will call with `undefined` on initialization.
         // Ignore until we are properly called with a string.
@@ -162,7 +202,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
-      _pageChanged(page) {
+      _pageChanged(page, oldValue) {
+       
         // Load page import on demand. Show 404 page if fails
         var resolvedPageUrl = this.resolveUrl('pages/' + page + '-page.html');
         Polymer.importHref(
@@ -171,6 +212,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             null,
             true);
       }
+      
+      
     }
 
     window.customElements.define(MyApp.is, MyApp);

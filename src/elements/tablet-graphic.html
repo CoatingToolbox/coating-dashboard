@@ -3,10 +3,14 @@
 <dom-module id="tablet-graphic">
   <template>
     <style>
+      :host {
+        --tablet-size: 196px;
+      }
       
       .tablet-graphic {
-        height: 196px;
-        width: 196px;
+        max-width: 45vw;
+        height: var(--tablet-size);
+        width: var(--tablet-size);
         fill: var(--app-primary-color);
         fill-opacity: 0.4;
         stroke: var(--app-primary-color);

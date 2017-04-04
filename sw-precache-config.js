@@ -15,6 +15,9 @@ module.exports = {
     '/index.html',
     '/manifest.json',
     '/bower_components/webcomponentsjs/*',
+    "/node_modules/redux/dist/redux.min.js",
+    "/node_modules/chart.js/dist/Chart.min.js",
+    "/src/pages/*"
   ],
   navigateFallback: 'index.html',
 };

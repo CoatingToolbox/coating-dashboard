@@ -14,6 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../elements/text-input.html">
 <link rel="import" href="../elements/number-unit-input.html">
 <link rel="import" href="../elements/coating-pan-graphic.html">
+<link rel="import" href="../elements/warning-chip.html">
 <link rel="import" href="../redux-mixin.html">
 <link rel="import" href="../my-icons.html">
 <link rel="import" href="shared-page-styles.html">
@@ -41,17 +42,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-weight: 500;
         border-bottom: 2px solid var(--text-primary-color);
       }
-      iron-selector .card-title:hover {
-        background-color: var(--app-background-color);
-        border-radius: 4px;
-      }
-      #graphic-container {
+      .pan-container {
         display: flex;
-        flex-direction: column;
-        align-items: center;
+        flex-direction: row;
+        justify-content: space-around;
       }
       coating-pan-graphic {
-        --pan-size: 196px;
+        --pan-size: 136px;
+      }
+      
+      @media(min-width: 480px) {
+        #graphic-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
       }
     </style>
     
@@ -66,19 +71,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </div>
     
-    
-    <div class='warning-chip' hidden='[[!isOverFilled]]'>
-      <iron-icon icon='my-icons:warning'></iron-icon>
+    <warning-chip show='[[isOverFilled]]'>
       <div class='warning-text'>
         Batch Volume exceed maximum working volume. Considering lower batch size or choosing a bigger coating pan.
       </div>
-    </div>
-    <div class='warning-chip' hidden='[[!isUnderFilled]]'>
-      <iron-icon icon='my-icons:warning'></iron-icon>
+    </warning-chip>
+    <warning-chip show='[[isUnderFilled]]'>
       <div class='warning-text'>
         Batch Volume is below the recommended minimum working volume. Considering a higher batch size or choosing a bigger coating pan.
       </div>
-    </div>
+    </warning-chip>
     
     <div id='main-container'>
       
@@ -86,8 +88,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='card'>
           <iron-selector selected='{{selectedChart}}'>
-            <div class='card-title'>Weight</div>
             <div class='card-title'>Density</div>
+            <div class='card-title'>Weight</div>
           </iron-selector>
           <canvas id='chart'></canvas>
         </div>
@@ -164,7 +166,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
         <div class='card'>
           <div class='card-title'>Pan Fill</div>
-          <div id='graphic-container'>
+          <div class='pan-container'>
             
             <coating-pan-graphic
               front-view
@@ -375,10 +377,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         let label;
         switch(selectedChart) {
-          case 0:
+          case 1:
             label = 'Weight (kg)';
             break;
-          case 1:
+          case 0:
             label = 'Density (g/ml)';
             break;
           default:
@@ -396,7 +398,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let vals = [];
         
         switch(selectedChart) {
-          case 0:
+          case 1:
             let minWeight = this.minFillVolume * density / 1000;
             vals.push({x: minWeight, y: this.minFillVolume * 1000});
             
@@ -404,7 +406,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             vals.push({x: maxWeight, y: this.maxFillVolume * 1000});
             break;
           
-          case 1:
+          case 0:
             // max and min density are set at 0.6 and 1.2 g/ml 
             let maxDensity = 1.2;
             let minDensity = 0.6;
@@ -427,11 +429,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               return;
           }
           switch(selectedChart) {
-            case 0:
+            case 1:
               chart.data.datasets[1].data[0].x = weight / 1000;
               break;
               
-            case 1:
+            case 0:
               chart.data.datasets[1].data[0].x = density / 1000000;
               break;
           }

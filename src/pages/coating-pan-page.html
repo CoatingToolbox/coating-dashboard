@@ -9,8 +9,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
-<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../elements/text-input.html">
@@ -41,9 +39,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     
-    <firebase-auth id="auth" user="{{user}}"></firebase-auth>
-    <firebase-query id='panQuery' path='/pans/[[user.uid]]'></firebase-query>
-    
     <div id='header-container'>
       <div id='header-card'>
         <div id='header-subhead'>Equipment</div>
@@ -56,18 +51,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </div>
     
-    <div class='warning-chip' hidden='[[!isOverFilled]]'>
-      <iron-icon icon='my-icons:warning'></iron-icon>
+    <warning-chip show='[[isOverFilled]]'>
       <div class='warning-text'>
         Batch Volume exceed maximum working volume. Considering lower batch size or choosing a bigger coating pan.
       </div>
-    </div>
-    <div class='warning-chip' hidden='[[!isUnderFilled]]'>
-      <iron-icon icon='my-icons:warning'></iron-icon>
+    </warning-chip>
+    <warning-chip show='[[isUnderFilled]]'>
       <div class='warning-text'>
         Batch Volume is below the recommended minimum working volume. Considering a higher batch size or choosing a bigger coating pan.
       </div>
-    </div>
+    </warning-chip>
     
     <div id='main-container'>
       
@@ -228,13 +221,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <text-input title='Location' value='[[locationName]]' on-value-changed='locationNameChanged'></text-input>
         </div>
         
-        <div class='highlight-card'>
-          <div class='card-title'>Save Custom Pan</div>
-          <div class='card-text'>
-            Looks like you are creating a custom coating pan. Save it to reference it again later.
-          </div>
-          <paper-button class='highlight-button'on-tap=''>Save</paper-button>
-        </div>
+        <!--<div class='highlight-card'>-->
+        <!--  <div class='card-title'>Save Custom Pan</div>-->
+        <!--  <div class='card-text'>-->
+        <!--    Looks like you are creating a custom coating pan. Save it to reference it again later.-->
+        <!--  </div>-->
+        <!--  <paper-button class='highlight-button'on-tap='_saveCoatingPan'>Save</paper-button>-->
+        <!--</div>-->
         
       </div>
       
@@ -335,9 +328,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           isOverFilled: { type: Boolean, statePath: 'pan.isOverFilled' },
           isUnderFilled: { type: Boolean, statePath: 'pan.isUnderFilled' },
-          user: {
-            type: Object
-          },
           lengthUnits: {
             type: String,
             value: 'in'
@@ -405,30 +395,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       }
       
-      saveCoatingPan() {
-        if(!this.user) {
-          this.$.auth.signInAnonymously();
-        }
-        this.$.panQuery.ref.push({
-          vendorName: this.vendorName,
-          equipmentName: this.equipmentName,
-          nickname: this.nickname,
-          companyName: this.companyName,
-          locationName: this.locationName,
-          panDiameter: this.panDiameter,
-          openingDiameter: this.openingDiameter,
-          brimWidth: this.brimWidth,
-          wallWidth: this.wallWidth,
-          calculatedBrimVolume: this.brimVolume,
-          calculatedMaxFillVolume: this.maxFillVolume,
-          calculatedMinFillVolume: this.minFillVolume
-          
-        });
-      }
       gotoLibrary() {
-        if(!this.user) {
-          this.$.auth.signInAnonymously();
-        }
         window.location = '#/coating-pan-library';
       }
       gotoNext() {

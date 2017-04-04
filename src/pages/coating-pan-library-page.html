@@ -9,12 +9,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <link rel="import" href="../elements/number-unit-input.html">
 <link rel="import" href="../redux-mixin.html">
 <link rel="import" href="../my-icons.html">
@@ -144,10 +144,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 26px;
         color: var(---text-secondary-color);
       }
+      
+      [hidden] {
+        display: none;
+      }
     </style>
     
-    <firebase-auth id="auth" user="{{user}}"></firebase-auth>
     <firebase-query path='/pans/default' data='{{defaultPans}}'></firebase-query>
+    <app-indexeddb-mirror key='pans' data='{{defaultPans}}' persisted-data='{{localPans}}'></app-indexeddb-mirror>
     
     <div id='header'>
       <div class='card'>
@@ -175,7 +179,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </tr>
         </thead>
         <tbody>
-          <template is='dom-repeat' items='[[defaultPans]]'>
+          <template is='dom-repeat' items='[[localPans]]'>
             <tr>
               <td class='text'>[[item.vendorName]] [[item.equipmentName]]</td>
               <td class='text'>[[item.nickname]]</td>
@@ -202,12 +206,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
       static get properties() {
         return {
-          user: {
-            type: Object
-          },
-          defaultPans: {
-            type: Array,
-          }
+          defaultPans: {type: Array},
+          localPans: {type: Array}
         };
       }
       
@@ -227,9 +227,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         window.location = '#/coating-pan';
       }
       
-      removePan(e) {
-        this.$.customPanQuery.ref.child(e.model.item.$key).remove();
-      }
+      // deletePan(e) {
+      //   this.$.userPanQuery.ref.child(e.model.item.$key).remove();
+      // }
+      
       
     }
 

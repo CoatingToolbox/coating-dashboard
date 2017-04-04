@@ -1,0 +1,41 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="page-scroll-position">
+  <script>
+  
+    class PageScrollPosition extends Polymer.Element {
+      
+      static get is() { return 'page-scroll-position';}
+      
+       static get properties() {
+        
+        return {
+          selected: {type: String, observer:'_selectedChanged'},
+          scrollMap: {type: Object, value: function(){return {};}}
+        };
+        
+      }
+      
+      _selectedChanged(newValue, oldValue) {
+        
+        // if(oldValue != null) {
+          
+        //   this.scrollMap[oldValue] = {x: this._scrollLeft, y: this._scrollRight};
+        // }
+        
+        // var pos = this.scrollMap[newValue];
+        // if(pos != null) {
+        //   this.scroll(pos.x, pos.y);
+        // } else {
+        //   this.scroll(0, 0);
+        // }
+        
+      }
+      
+    }
+    
+    window.customElements.define(PageScrollPosition.is, PageScrollPosition);
+    
+  </script>
+
+</dom-module>
