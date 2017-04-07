@@ -4,14 +4,15 @@
 <link rel='import' href="data/coating-pan-model.html">
 <link rel='import' href="data/tablet-model.html">
 <link rel='import' href="data/batch-model.html">
+<link rel='import' href="data/coating-formulation-model.html">
 
 <script>
   const initialState = {
       pan: new CoatingPan(), /*global CoatingPan*/
       tablet: new Tablet(), /*global Tablet*/
       batch: new Batch(), /*global Batch*/
-      user: {}
-      // coating: new Coating(), /*global Coating*/
+      user: {},
+      coating: new CoatingFormulation(), /*global Coating*/
       // mixer: new Mixer() /*global Mixer*/
     };
     
@@ -19,8 +20,8 @@
     initialState.batch.tabletSurfaceArea = initialState.tablet.totalArea;
     initialState.batch.tabletWeight = initialState.tablet.weight;
     initialState.pan.fillVolume = initialState.batch.volume;
-    // initialState.coating.batchWeight = initialState.tablet.batchWeight;
-    // initialState.coating.tabletArea = initialState.tablet.totalArea;
+    initialState.coating.batchWeight = initialState.batch.weight;
+    initialState.coating.tabletArea = initialState.tablet.totalArea;
   
    const reducer = (state, action) => {
      
@@ -29,6 +30,7 @@
     let pan = Object.assign(new CoatingPan(), state.pan);
     let tablet = Object.assign(new Tablet(), state.tablet);
     let batch = Object.assign(new Batch(), state.batch);
+    let coating = Object.assign(new CoatingFormulation(), state.coating);
     let user = state.user;
     
     switch(action.type) {
@@ -135,6 +137,7 @@
       
       case 'SET_BATCH_WEIGHT':
         batch.weight = action.value;
+        coating.batchWeight = action.value;
         break;
       
       case 'CALCULATE_BATCH_WEIGHT':
@@ -145,18 +148,44 @@
         batch.density = action.value;
         break;
         
+      case 'SET_COATING_WEIGHT_GAIN':
+        coating.weightGain = action.value;
+        break;
+        
+      case 'SET_COATING_DENSITY':
+        coating.density = action.value;
+        break;
+        
+      case 'SET_COATING_PRODUCT_NAME':
+        coating.productName = action.value;
+        break;
+        
+      case 'SET_COATING_FORMULA':
+        coating.formula = action.value;
+        break;
+        
+      case 'SET_COATING_WEIGHT':
+        coating.coatingWeight = action.value;
+        break;
+        
+      case 'SET_COATING_COVERAGE':
+        coating.coatingCoverage = action.value;
+        break;
+        
       default: 
         return state;
     }
     
-    batch.tabletSurfaceArea = tablet.totalArea;
+    // share properties amoung objects that are computed
+    batch.tabletSurfaceArea = coating.tabletArea = tablet.totalArea;
     batch.tabletWeight = tablet.weight;
-    pan.fillVolume = batch.volume;    
+    pan.fillVolume = batch.volume;  
     
     return Object.assign({}, {
       pan: pan,
       batch: batch,
       tablet: tablet,
+      coating: coating,
       user: user
     });
   };

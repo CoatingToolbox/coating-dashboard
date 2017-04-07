@@ -128,6 +128,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="tablet" role="main">
           <tablet-page name='tablet'></tablet-page>
+          <coating-formulation-page name='coating-formulation'></coating-formulation-page>
           <coating-pan-page name='coating-pan'></coating-pan-page>
           <coating-pan-library-page name='coating-pan-library'></coating-pan-library-page>
           <batch-page name='batch'></batch-page>
@@ -195,7 +196,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // If no page was found in the route data, page will be an empty string.
         // Deault to 'view1' in that case.
         this.page = page || 'tablet';
-
+        ga('set', 'page', page);
+        ga('send', 'pageview');
+        
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();
@@ -206,13 +209,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        
         // Load page import on demand. Show 404 page if fails
         var resolvedPageUrl = this.resolveUrl('pages/' + page + '-page.html');
-        Polymer.importHref(
-            resolvedPageUrl,
-            null,
-            null,
-            true);
+        Polymer.importHref(resolvedPageUrl, null, null, true);
       }
-      
       
     }
 

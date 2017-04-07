@@ -1,0 +1,60 @@
+<script>
+    class CoatingFormulation {
+
+        constructor(weightGain = 0.03, density = 1100000, solids = 0.2) {
+            this.weightGain = weightGain;
+            this.density = density;
+            this.solids = solids;
+            this.overage = 0;
+            this.tabletWeight = 0.400;
+            this.tabletArea = 1;
+            this.batchWeight = 120000;
+            this.name = 'Opadry II 85F';
+            this.formula = '85F18422';
+        }
+
+        get filmThickness() {
+            // (grams / meters^2) / (grams / meters^3) = meters
+            return this.coatingCoverage / this.density;
+        }
+
+        set filmThickness(val) {
+            this.coatingCoverage = val * this.density;
+        }
+
+        get coatingCoverage() {
+            // grams * percent / meters^2 = grams / meters^2
+            return this.tabletWeight * this.weightGain / this.tabletArea;
+        }
+
+        set coatingCoverage(val) {
+            this.weightGain = val / this.tabletWeight * this.tabelArea;
+        }
+        
+        get powderWeight() {
+            return this.batchWeight * this.weightGain * (1 + this.overage);
+        }
+        
+        get dispersionWeight() {
+            return this.powderWeigth / this.solids;
+        }
+        
+        get waterWeight() {
+            return this.disperstionWeight - this.powderWeight;
+        }
+        
+        get dispersionVolume() {
+            return this.dispersionWeight / this.density;
+        }
+        // the amount of solution to spray to achieve target weight gain
+        // this is different than what is prepared because of the overage
+        get sprayWeight() {
+            return this.batchWeight * this.weightGain / this.solids;
+        }
+        // the amount of solution to spray to achieve target weight gain
+        // this is different than what is prepared because of the overage
+        get sprayVolume() {
+            return this.sprayWeigth / this.density;
+        }
+    }
+</script>

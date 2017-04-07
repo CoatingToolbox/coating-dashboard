@@ -1,0 +1,377 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../elements/text-input.html">
+<link rel="import" href="../elements/number-unit-input.html">
+<link rel="import" href="../elements/dropdown-input.html">
+<link rel="import" href="../redux-mixin.html">
+<link rel="import" href="../my-icons.html">
+<link rel="import" href="shared-page-styles.html">
+
+<dom-module id="coating-formulation-page">
+  <template>
+    
+    <style include='shared-page-styles'>
+      :host {
+        --app-primary-color: #00897b;
+      }
+      #chart {
+        margin-top: 16px;
+      }
+      iron-selector {
+        display: flex;
+      }
+      iron-selector .card-title {
+        color: var(--text-secondary-color);
+        font-weight: 200;
+        margin-right: 12px;
+        padding: 0px 4px 2px 4px;
+      }
+      iron-selector .iron-selected {
+        color: var(--text-primary-color);
+        font-weight: 500;
+        border-bottom: 2px solid var(--text-primary-color);
+      }
+    </style>
+    
+    <!--<firebase-auth id="auth" user="{{user}}"></firebase-auth>-->
+    
+    <div id='header-container'>
+      <div id='header-card'>
+        <div id='header-subhead'>Material</div>
+        <div id='header-title'>Coating Formulation</div>
+        <div id='header-text'>
+          Time to look at the coating formulation. as applied to the tablet. 
+        </div>
+      </div>
+    </div>
+    
+    <div id='main-container'>
+      
+      <div id='left-column'>
+        
+        <div class='card'>
+          <iron-selector selected='{{selectedChart}}'>
+            <div class='card-title'>Coverage</div>
+            <div class='card-title'>Thickness</div>
+          </iron-selector>
+          <canvas id='chart'></canvas>
+        </div>
+          
+        <div class='card'>
+          <div class='card-title'>Inputs</div>
+       <!--   <dropdown-input-->
+    			<!--	title='Coating Type' -->
+    			<!--	selected-item='[[type]]'-->
+    			<!--	items='["immediate release", "enteric", "extended release"]'-->
+    			<!--	on-value-changed='' -->
+    			<!--	details='The coating functionality'>-->
+    			<!--</dropdown-input>-->
+          <number-unit-input
+    				title='Weight Gain' 
+    				value='[[weightGain]]' 
+    				type='percent' 
+    				selected-units='%'
+    				on-value-changed='weightGainChanged' 
+    				details='The amount of coating to apply by percent weight of the tablet'>
+    			</number-unit-input>
+      	  <number-unit-input 
+      	  	title='Coating Density'
+      	  	value='[[density]]'
+      	  	type='density'
+      	  	selected-units='g/ml'
+      	  	on-value-changed='densityChanged'
+      	  	details='The density of the coating when applied as a film'>
+      	  </number-unit-input>
+        </div>
+        
+        <div class='card'>
+          <div class='card-title'>Estimated Film Properties</div>
+    			
+    			<number-unit-input 
+    				title='Coating Coverage' 
+    				value='[[coatingCoverage]]' 
+    				type='weight/area' 
+    				selected-units='mg/cm2' 
+    				details='The coating coverage to apply' 
+    				no-input>
+    			</number-unit-input>
+    			<number-unit-input 
+    				title='Film Thickness' 
+    				value='[[filmThickness]]' 
+    				type='length' 
+    				selected-units='um' 
+    				details='The film thickness applied to the tablet' 
+    				no-input>
+    			</number-unit-input>
+			  </div>
+			  
+			  <div class='highlight-card'>
+			    <div class='card-title'>What's Next</div>
+			    <div class='card-text'>Now that we know about the amount of coating we want to apply we will decide on the
+			    coating pan we will use to apply the coating</div>
+			    <paper-button class='highlight-button' on-tap='gotoNext'>
+			      <div>Coating Pan</div>
+			      <iron-icon icon='my-icons:arrow-forward'></iron-icon>
+			    </paper-button>
+			  </div>
+			  
+      </div>
+      
+      <div id='right-column'>
+        
+        <div class='highlight-card'>
+          <div class='card-title'>Coating Library</div>
+          <div class='card-text'>The library includes a list of coating pans with predefined measurements. The library is based on coating pans found 
+          at different Colocon sites and coating pan vendor specfications. Choose one today to get started.
+          </div>
+          <paper-button class='highlight-button' on-tap='gotoLibrary'>Library</paper-button>
+        </div>
+        
+        <div class='card'>
+          <div class='card-title'>Information</div>
+          <text-input title='Product' value='[[name]]' on-value-changed='productChanged'></text-input>
+          <text-input title='Formula' value='[[formula]]' on-value-changed='formulaChanged'></text-input>
+        </div>
+        
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class CoatingFormulationPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
+      
+      static get is() { return 'coating-formulation-page'; }
+      
+       connectedCallback() {
+        super.ready();
+        this.chart = new Chart(this.$.chart, {
+            type: 'line',
+            data: {
+              datasets: [
+                {
+                  fill: false,
+                  pointRadius: 0,
+                  borderWidth: 36,
+                  borderCapStyle: 'round',
+                  data: [{x:0, y:0}]
+                }, 
+                {
+                  fill: false,
+                  pointRadius: 6,
+                  pointBackgroundColor: '#00897b',
+                  data: [{x:0, y:0}]
+                }
+              ],
+            },
+            options: {
+              legend: {
+                  display: false
+              },
+              tooltips: {
+                  enabled: false
+              },
+              hover: {
+                  mode: ''
+              },
+              scales: {
+                xAxes: [{
+                  type: 'linear',
+                  ticks: {
+                    min: 0,
+                  }, 
+                  position: 'bottom',
+                  
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Weight Gain (%)'
+                  }
+                }], 
+                yAxes: [{
+                  type: 'linear',
+                  ticks: {
+                    min: 0, 
+                  }, 
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Coating Coverage (mg/cm2)'
+                  }
+                }]
+              }
+          }
+        });
+      }
+      
+      static get properties() {
+        return {
+          user: {
+            type: Object
+          },
+          weightGain: {
+            type: Number,
+            statePath: 'coating.weightGain'
+          },
+          coatingCoverage: {
+            type: Number,
+            statePath: 'coating.coatingCoverage'
+          },
+          filmThickness: {
+            type: Number,
+            statePath: 'coating.filmThickness'
+          },
+          coatingWeight: {
+            type: Number,
+            statePath: 'coating.coatingWeight'
+          },
+          density: {
+            type: Number,
+            statePath: 'coating.density'
+          },
+          formula: {
+            type: Number,
+            statePath: 'coating.formula'
+          },
+          product: {
+            type: Number,
+            statePath: 'coating.productName'
+          },
+          selectedChart: {
+            type: Number,
+            value: 0
+          },
+          chart: {
+            type: Object
+          },
+          tabletArea: {
+            type: Number,
+            statePath: 'tablet.totalArea',
+          },
+          tabletWeight: {
+            type: Number,
+            statePath: 'tablet.weight'
+          }
+        };
+      }
+      
+      weightGainChanged(e) {
+        this.dispatch({
+          type: "SET_COATING_WEIGHT_GAIN",
+          value: e.detail.value
+        });
+      }
+      densityChanged(e) {
+        this.dispatch({
+          type: "SET_COATING_DENSITY",
+          value: e.detail.value
+        });
+      }
+      productChanged(e) {
+        this.dispatch({
+          type: 'SET_COATING_PRODUCT_NAME',
+          value: e.detail.value
+        });
+      }
+      formulaChanged(e) {
+        this.dispatch({
+          type: 'SET_COATING_FORMULA',
+          value: e.detail.value
+        });
+      }
+      
+      static get observers() {
+        return [
+          'updateChartAxis(selectedChart, chart)',
+          'updateChartTrendLine(tabletWeight, tabletArea, selectedChart, chart)',
+          'updateChartPoint(weightGain, filmThickness, coatingCoverage, selectedChart, chart)'
+        ];
+      }
+      updateChartAxis(selectedChart, chart) {
+        if(!chart) { return; }
+        
+        let label;
+        switch(selectedChart) {
+          case 0:
+            label = 'Coating Coverage (mg/cm2)';
+            break;
+          case 1:
+            label = 'Film Thickness (um)';
+            break;
+          default:
+            label ='';
+            break;
+        }
+        this.chart.options.scales.yAxes[0].scaleLabel.labelString = label;
+        this.chart.update();
+      }
+      updateChartTrendLine(tabletWeight, tabletArea, selectedChart, chart) {
+        if(!chart) {
+            return;
+        }
+        let vals = [];
+        switch(selectedChart) {
+          case 0:
+            // max and min coating coverage are set at 3 and 6 mg/cm2
+            let minCC = 3;
+            let maxCC = 6
+        
+            // // min and max wg are determined from current tablet surface area, tablet weight, and min and max cc;
+            let minWG = minCC / tabletWeight * tabletArea * 1000;
+            let maxWG = maxCC / tabletWeight * tabletArea * 1000;
+        
+            // // push the min volume (in liters) and min weight (in kg)
+            vals.push({x: minWG, y: minCC});
+            
+            // // push the min volume (in liters) and min weight (in kg)
+            vals.push({x: maxWG, y: maxCC});
+            break;
+          
+          default: 
+            break;
+        }
+        
+        chart.data.datasets[0].data = vals;
+        chart.update();
+      }
+      updateChartPoint(weightGain, filmThickness, coatingCoverage, selectedChart, chart) {
+          if(!chart) {
+              return;
+          }
+          switch(selectedChart) {
+            case 0:
+              chart.data.datasets[1].data[0].y = coatingCoverage / 10;
+              break;
+              
+            case 1:
+              chart.data.datasets[1].data[0].y = filmThickness / 1e-6;
+              break;
+          }
+          
+          chart.data.datasets[1].data[0].x = weightGain * 100;
+          chart.update();
+      }
+      
+      gotoLibrary() {
+        // window.location = '#/tablet-library';
+      }
+      gotoNext() {
+        window.location = '#/coating-pan';
+      }
+      
+    }
+
+    window.customElements.define(CoatingFormulationPage.is, CoatingFormulationPage);
+    
+  </script>
+</dom-module>
