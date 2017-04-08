@@ -5,6 +5,7 @@
 <link rel='import' href="data/tablet-model.html">
 <link rel='import' href="data/batch-model.html">
 <link rel='import' href="data/coating-formulation-model.html">
+<link rel="import" href="data/mixing-equipment-model.html">
 
 <script>
   const initialState = {
@@ -12,8 +13,8 @@
       tablet: new Tablet(), /*global Tablet*/
       batch: new Batch(), /*global Batch*/
       user: {},
-      coating: new CoatingFormulation(), /*global Coating*/
-      // mixer: new Mixer() /*global Mixer*/
+      coating: new CoatingFormulation(), /*global CoatingFormulation*/
+      mixing: new MixingEquipment() /*global MixingEquipment*/
     };
     
     // sync initial values across different models
@@ -31,6 +32,7 @@
     let tablet = Object.assign(new Tablet(), state.tablet);
     let batch = Object.assign(new Batch(), state.batch);
     let coating = Object.assign(new CoatingFormulation(), state.coating);
+    let mixing = Object.assign(new MixingEquipment(), state.mixing);
     let user = state.user;
     
     switch(action.type) {
@@ -171,6 +173,28 @@
       case 'SET_COATING_COVERAGE':
         coating.coatingCoverage = action.value;
         break;
+    
+      case 'SET_MIXING_VESSEL_DIAMETER':
+        mixing.vesselDiameter = action.value;
+        break;
+      case 'SET_MIXING_VESSEL_HEIGHT':
+        mixing.vesselHeight = action.value;
+        break;
+      case 'SET_MIXING_BLADE_DIAMETER':
+        mixing.bladeDiameter = action.value;
+        break;
+      case 'SET_MIXING_VESSEL_NAME':
+        mixing.vesselName = action.value;
+        break;
+      case 'SET_MIXING_VESSEL_DESCRIPTION':
+        mixing.vesselDescription = action.value;
+        break;
+      case 'SET_MIXING_VESSEL_BOTTOM_TYPE':
+        mixing.vesselBottomType = action.value;
+        break;
+      case 'SET_MIXING_BLADE_TYPE':
+        mixing.bladeType = action.value;
+        break;
         
       default: 
         return state;
@@ -186,6 +210,7 @@
       batch: batch,
       tablet: tablet,
       coating: coating,
+      mixing: mixing,
       user: user
     });
   };

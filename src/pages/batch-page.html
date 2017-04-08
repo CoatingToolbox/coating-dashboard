@@ -85,18 +85,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div id='main-container'>
       
       <div id='left-column'>
-        
-        <div class='card'>
-          <iron-selector selected='{{selectedChart}}'>
-            <div class='card-title'>Density</div>
-            <div class='card-title'>Weight</div>
-          </iron-selector>
-          <canvas id='chart'></canvas>
-        </div>
           
         <div class='card'>
           <div class='card-title'>Inputs</div>
-    			</number-unit-input>
 					<number-unit-input
       	  	title='Bulk Density' 
     			  value='[[density]]' 
@@ -113,6 +104,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     				details='The weight of material to coat' 
     				on-value-changed='weightChanged'>
       	  </number-unit-input>
+        </div>
+        
+        <div class='card'>
+          <iron-selector selected='{{selectedChart}}'>
+            <div class='card-title'>Density</div>
+            <div class='card-title'>Weight</div>
+          </iron-selector>
+          <canvas id='chart'></canvas>
         </div>
         
         <div class='card'>
@@ -463,7 +462,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       
       gotoNext() {
-        window.location = '#/coating-dispersion';
+        window.location = '#/mixing-equipment';
       }
     }
 

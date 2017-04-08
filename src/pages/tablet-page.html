@@ -76,41 +76,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div id='main-container'>
       
       <div id='left-column'>
-        
-        <div class='card'>
-          <div class='card-title'>Tablet Outline</div>
-          <div id='graphic-container'>
-            
-            <tablet-graphic
-              top-view
-              shape='[[shape]]'
-              width='[[width]]'
-              length='[[length]]'
-              band-thickness='[[bandThickness]]'
-              cup-thickness='[[cupThickness]]'>
-            </tablet-graphic>
-            
-            <tablet-graphic
-              length-view
-              shape='[[shape]]'
-              width='[[width]]'
-              length='[[length]]'
-              band-thickness='[[bandThickness]]'
-              cup-thickness='[[cupThickness]]'>
-            </tablet-graphic>
-            
-            <tablet-graphic
-              width-view
-              hidden$='[[isRound(shape)]]'
-              shape='[[shape]]'
-              width='[[width]]'
-              length='[[length]]'
-              band-thickness='[[bandThickness]]'
-              cup-thickness='[[cupThickness]]'>
-            </tablet-graphic>
-            
-          </div>
-        </div>
           
         <div class='card'>
           <div class='card-title'>Inputs</div>
@@ -165,6 +130,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
         
         <div class='card'>
+          <div class='card-title'>Tablet Outline</div>
+          <div id='graphic-container'>
+            
+            <tablet-graphic
+              top-view
+              shape='[[shape]]'
+              width='[[width]]'
+              length='[[length]]'
+              band-thickness='[[bandThickness]]'
+              cup-thickness='[[cupThickness]]'>
+            </tablet-graphic>
+            
+            <tablet-graphic
+              length-view
+              shape='[[shape]]'
+              width='[[width]]'
+              length='[[length]]'
+              band-thickness='[[bandThickness]]'
+              cup-thickness='[[cupThickness]]'>
+            </tablet-graphic>
+            
+            <tablet-graphic
+              width-view
+              hidden$='[[isRound(shape)]]'
+              shape='[[shape]]'
+              width='[[width]]'
+              length='[[length]]'
+              band-thickness='[[bandThickness]]'
+              cup-thickness='[[cupThickness]]'>
+            </tablet-graphic>
+            
+          </div>
+        </div>
+        
+        <div class='card'>
           <div class='card-title'>Estimated Tablet Properties</div>
     			<number-unit-input  
         	  no-input  
@@ -195,37 +195,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			</number-unit-input>
 			  </div>
 			  
-			  <div class='highlight-card'>
-			    <div class='card-title'>What's Next</div>
-			    <div class='card-text'>Now that we know about the tablet we are going to coat. Let's learn about
-			    applying a coating to the tablet. In the next step you will provide some 
-			    informatino about your coating to determine the right amount to apply to the tablet</div>
-			    <paper-button class='highlight-button' on-tap='gotoNext'>
-			      <div>Coating</div>
-			      <iron-icon icon='my-icons:arrow-forward'></iron-icon>
-			    </paper-button>
-			  </div>
-			  
-      </div>
-      
-      <div id='right-column'>
-        
-        <div class='highlight-card'>
-          <div class='card-title'>Tablet Library</div>
-          <div class='card-text'>The library includes a list of coating pans with predefined measurements. The library is based on coating pans found 
-          at different Colocon sites and coating pan vendor specfications. Choose one today to get started.
-          </div>
-          <paper-button class='highlight-button' on-tap='gotoLibrary'>Library</paper-button>
-        </div>
-        
-        <div class='card'>
-          <div class='card-title'>Information</div>
-          <text-input title='Product' value='[[productName]]' on-value-changed=''></text-input>
-          <text-input title='Formulation' value='[[formulationName]]' on-value-changed=''></text-input>
-          <text-input title='Tooling' value='[[toolingName]]' on-value-changed=''></text-input>
-          <text-input title='Company' value='[[companyName]]' on-value-changed=''></text-input>
-        </div>
-			  
 			  <div class='card'>
           <div class='card-title'>Estimated Tooling Properties</div>
     			<number-unit-input 
@@ -254,6 +223,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         	</number-unit-input>
 			  </div>
 			  
+			  <div class='highlight-card'>
+			    <div class='card-title'>What's Next</div>
+			    <div class='card-text'>Now that we know about the tablet we are going to coat. Let's learn about
+			    applying a coating to the tablet. In the next step you will provide some 
+			    informatino about your coating to determine the right amount to apply to the tablet</div>
+			    <paper-button class='highlight-button' on-tap='gotoNext'>
+			      <div>Coating</div>
+			      <iron-icon icon='my-icons:arrow-forward'></iron-icon>
+			    </paper-button>
+			  </div>
+			  
+      </div>
+      
+      <div id='right-column'>
+        
+        <div class='highlight-card'>
+          <div class='card-title'>Tablet Library</div>
+          <div class='card-text'>The library includes a list of coating pans with predefined measurements. The library is based on coating pans found 
+          at different Colocon sites and coating pan vendor specfications. Choose one today to get started.
+          </div>
+          <paper-button class='highlight-button' on-tap='gotoLibrary'>Library</paper-button>
+        </div>
+        
+        <div class='card'>
+          <div class='card-title'>Information</div>
+          <text-input title='Product' value='[[productName]]' on-value-changed='productNameChanged'></text-input>
+          <text-input title='Formulation' value='[[formulationName]]' on-value-changed='formulationNameChanged'></text-input>
+          <text-input title='Tooling' value='[[toolingName]]' on-value-changed='toolingNameChanged'></text-input>
+          <text-input title='Company' value='[[companyName]]' on-value-changed='companyNameChanged'></text-input>
+        </div>
+			  
       </div>
     </div>
   </template>
@@ -262,10 +262,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     class TabletPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
       
       static get is() { return 'tablet-page'; }
-      
-      // constructor() {
-      //     super();
-      // }
       
       static get properties() {
         return {

@@ -1,0 +1,227 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../elements/text-input.html">
+<link rel="import" href="../elements/number-unit-input.html">
+<link rel="import" href="../elements/coating-pan-graphic.html">
+<link rel="import" href="../elements/warning-chip.html">
+<link rel="import" href="../redux-mixin.html">
+<link rel="import" href="../my-icons.html">
+<link rel="import" href="shared-page-styles.html">
+
+<dom-module id="mixing-equipment-page">
+  <template>
+    <style include='shared-page-styles'>
+      :host {
+        
+      }
+      
+      .card-container {
+        display: flex;
+        flex-grow: 1;
+      }
+    </style>
+    
+    <div id='header-container'>
+      <div id='header-card'>
+        <div id='header-subhead'>Equipment</div>
+        <div id='header-title'>Mixing Equipment</div>
+        <div id='header-text'>
+          Choose your batch size and see how it effect the pan fill. Or
+    	    click "Recommend" to be give the optimal batch size for the coating pan.
+        </div>
+      </div>
+    </div>
+    
+    <div id='main-container'>
+      
+      <div id='left-column'>
+          
+        <div class='card'>
+          <div class='card-title'>Inputs</div>
+					<number-unit-input
+      	  	title='Vessel Diameter' 
+    			  value='[[vesselDiameter]]' 
+    			  type='length' 
+    			  selected-units='in'
+    			  details='The diameter of the mixing vessel opening'
+      	  	on-value-changed='vesselDiameterChanged'>
+    			</number-unit-input>
+					<number-unit-input
+      	  	title='Vessel Height' 
+    			  value='[[vesselHeight]]' 
+    			  type='length' 
+    			  selected-units='in'
+    			  details='The height of the mixing vessel'
+      	  	on-value-changed='vesselHeightChanged'>
+    			</number-unit-input>
+					<number-unit-input
+      	  	title='Blade Diameter' 
+    			  value='[[bladeDiameter]]' 
+    			  type='length' 
+    			  selected-units='in'
+    			  details='The diameter of the mixing blade'
+      	  	on-value-changed='bladeDiameterChanged'>
+    			</number-unit-input>
+        </div>
+        
+        <div class='card-container'>
+          <div class='card'></div>
+          <div class='card'></div>
+        </div>
+        
+        <div class='card'>
+          <div class='card-title'>Calculated Volumes</div>
+    			<number-unit-input 
+      	    no-input
+    				title='Full Volume' 
+    				value='[[vesselFullVolume]]' 
+    				type='volume' 
+    				selected-units='l' 
+    				details='The volume of the vessel to the very top'>
+    			</number-unit-input>
+    			<number-unit-input 
+      	    no-input
+    				title='Max Volume' 
+    				value='[[vesselMaxVolume]]' 
+    				type='volume' 
+    				selected-units='l' 
+    				details='The recommended max volume for mixing'>
+    			</number-unit-input>
+    			<number-unit-input 
+      	    no-input
+    				title='Min Volume' 
+    				value='[[vesselMinVolume]]' 
+    				type='volume' 
+    				selected-units='l' 
+    				details='The recommended min volume for mixing'>
+    			</number-unit-input>
+        </div>
+        
+        <div class='highlight-card'>
+  		    <div class='card-title'>What's Next</div>
+  		    <div class='card-text'>With the batch size determine we can now start to prepare the 
+  		    coating dispersion. You will review the target solids content and the mixing equipment required.</div>
+  		    <paper-button class='highlight-button' on-tap='gotoNext'>
+  		      <div>Coating Dispersion</div>
+  		      <iron-icon icon='my-icons:arrow-forward'></iron-icon>
+  		    </paper-button>
+  		  </div>
+			  
+      </div>
+      
+      <div id='right-column'>
+        
+        <div class='highlight-card'>
+          <div class='card-title'>Vessel Library</div>
+          <div class='card-text'>The library includes a list of coating pans with predefined measurements. The library is based on coating pans found 
+          at different Colocon sites and coating pan vendor specfications. Choose one today to get started.
+          </div>
+          <paper-button class='highlight-button' on-tap='gotoLibrary'>Library</paper-button>
+        </div>
+        
+        <div class='card'>
+          <div class='card-title'>Information</div>
+          <text-input title='Vessel Name' value='[[vesselName]]' on-value-changed=''></text-input>
+          <text-input title='Description' value='[[vesslDescription]]' on-value-changed=''></text-input>
+        </div>
+    </div>
+    </div>
+  </template>
+
+  <script>
+    class MixingEquipmentPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
+      
+      static get is() { return 'mixing-equipment-page'; }
+      
+      
+      static get properties() {
+        return {
+          vesselName: {
+            type: String,
+            statePath: 'mixing.vesselName'
+          },
+          vesselDescription: {
+            type: String,
+            statePath: 'mixing.vesselDescription'
+          },
+          vesselDiameter: {
+            type: Number,
+            statePath: 'mixing.vesselDiameter'
+          },
+          vesselHeight: {
+            type: Number,
+            statePath: 'mixing.vesselHeight'
+          },
+          vesselBottomType: {
+            type: Number,
+            statePath: 'mixing.vesselBottomType'
+          },
+          bladeDiameter: {
+            type: Number,
+            statePath: 'mixing.bladeDiameter'
+          },
+          bladeType: {
+            type: String,
+            statePath: 'mixing.bladeType'
+          },
+          vesselFullVolume: {
+            type: Number,
+            statePath: 'mixing.volume'
+          },
+          vesselMaxVolume: {
+            type: Number,
+            statePath: 'mixing.maxVolume'
+          }, 
+          vesselMinVolume: {
+            type: Number,
+            statePath: 'mixing.minVolume'
+          },
+          isIdealDimensions: {
+            type: Boolean,
+            statePath: 'mixing.idealDimensions'
+          },
+          isIdealBlade: {
+            type: Boolean,
+            statePath: 'mixing.idealBlade'
+          }
+        };
+      }
+      
+      vesselDiameterChanged(e) {
+        this.dispatch({
+          type: "SET_MIXING_VESSEL_DIAMETER",
+          value: e.detail.value
+        });
+      }
+      vesselHeightChanged(e) {
+        this.dispatch({
+          type: "SET_MIXING_VESSEL_HEIGHT",
+          value: e.detail.value
+        });
+      }
+      bladeDiameterChanged(e) {
+        this.dispatch({
+          type: "SET_MIXING_BLADE_DIAMETER",
+          value: e.detail.value
+        });
+      }
+      
+      gotoNext() {
+        window.location = '#/mixing-equipment';
+      }
+    }
+
+    window.customElements.define(MixingEquipmentPage.is, MixingEquipmentPage);
+  </script>
+</dom-module>

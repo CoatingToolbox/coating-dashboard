@@ -61,14 +61,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div id='main-container'>
       
       <div id='left-column'>
-        
-        <div class='card'>
-          <iron-selector selected='{{selectedChart}}'>
-            <div class='card-title'>Coverage</div>
-            <div class='card-title'>Thickness</div>
-          </iron-selector>
-          <canvas id='chart'></canvas>
-        </div>
           
         <div class='card'>
           <div class='card-title'>Inputs</div>
@@ -95,6 +87,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       	  	on-value-changed='densityChanged'
       	  	details='The density of the coating when applied as a film'>
       	  </number-unit-input>
+        </div>
+        
+        <div class='card'>
+          <iron-selector selected='{{selectedChart}}'>
+            <div class='card-title'>Coverage</div>
+            <div class='card-title'>Thickness</div>
+          </iron-selector>
+          <canvas id='chart'></canvas>
         </div>
         
         <div class='card'>
@@ -142,7 +142,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='card'>
           <div class='card-title'>Information</div>
-          <text-input title='Product' value='[[name]]' on-value-changed='productChanged'></text-input>
+          <text-input title='Product' value='[[productName]]' on-value-changed='productChanged'></text-input>
           <text-input title='Formula' value='[[formula]]' on-value-changed='formulaChanged'></text-input>
         </div>
         
@@ -243,7 +243,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: Number,
             statePath: 'coating.formula'
           },
-          product: {
+          productName: {
             type: Number,
             statePath: 'coating.productName'
           },

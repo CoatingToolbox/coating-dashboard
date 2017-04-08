@@ -66,35 +66,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div id='main-container'>
       
       <div id='left-column'>
-        
-        <div class='card'>
-          <div class='card-title'>Coating Pan Outline</div>
-          <div class='graphic-container'>
-            
-            <coating-pan-graphic
-              front-view
-              pan-diameter='[[panDiameter]]'
-              opening-diameter='[[openingDiameter]]'
-              wall-width='[[wallWidth]]'
-              brim-width='[[brimWidth]]'
-              fill-height='[[fillHeight]]'
-              fill-width='[[fillWidth]]'
-              fill-length='[[fillLength]]'>
-            </coating-pan-graphic>
-            
-            <coating-pan-graphic
-              side-view
-              pan-diameter='[[panDiameter]]'
-              opening-diameter='[[openingDiameter]]'
-              wall-width='[[wallWidth]]'
-              brim-width='[[brimWidth]]'
-              fill-height='[[fillHeight]]'
-              fill-width='[[fillWidth]]'
-              fill-length='[[fillLength]]'>
-            </coating-pan-graphic>
-            
-          </div>
-        </div>
           
         <div class='card'>
           <div class='card-title'>Inputs</div>
@@ -133,6 +104,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
         
         <div class='card'>
+          <div class='card-title'>Coating Pan Outline</div>
+          <div class='graphic-container'>
+            
+            <coating-pan-graphic
+              front-view
+              pan-diameter='[[panDiameter]]'
+              opening-diameter='[[openingDiameter]]'
+              wall-width='[[wallWidth]]'
+              brim-width='[[brimWidth]]'
+              fill-height='[[fillHeight]]'
+              fill-width='[[fillWidth]]'
+              fill-length='[[fillLength]]'>
+            </coating-pan-graphic>
+            
+            <coating-pan-graphic
+              side-view
+              pan-diameter='[[panDiameter]]'
+              opening-diameter='[[openingDiameter]]'
+              wall-width='[[wallWidth]]'
+              brim-width='[[brimWidth]]'
+              fill-height='[[fillHeight]]'
+              fill-width='[[fillWidth]]'
+              fill-length='[[fillLength]]'>
+            </coating-pan-graphic>
+            
+          </div>
+        </div>
+        
+        <div class='card'>
             <div class='card-title'>Estimated Volumes</div>
             <number-unit-input
               title='Brim Volume'
@@ -162,36 +162,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               selected-units='{{volumeUnits}}'>
             </number-unit-input>
           </div>
-          
-     <!--   <div class='card'>-->
-     <!--     <div class='card-title'>Pan Fill Calculations</div>-->
-					<!--<number-unit-input-->
-					<!--  no-input-->
-     <!-- 	  	title='Fill Height' -->
-    	<!--		  value='[[fillHeight]]' -->
-    	<!--		  type='length' -->
-    	<!--		  selected-units='{{lengthUnits}}'-->
-    	<!--		  details='The maximum bed height'>-->
-    	<!--		</number-unit-input>-->
-    	<!--		<number-unit-input-->
-					<!--  no-input-->
-     <!-- 	  	title='Fill to Brim' -->
-    	<!--		  value='[[fillToBrim]]' -->
-    	<!--		  type='length' -->
-    	<!--		  selected-units='{{lengthUnits}}'-->
-    	<!--		  details='The distance between the product bed and the brim opening'>-->
-    	<!--		</number-unit-input>-->
-    	<!--	<number-unit-input-->
-					<!--  no-input-->
-     <!-- 	  	title='Fill Width' -->
-    	<!--		  value='[[fillWidth]]' -->
-    	<!--		  type='length' -->
-    	<!--		  selected-units='{{lengthUnits}}'-->
-    	<!--		  details='The maximum width of the product bed on the surface'>-->
-    	<!--		</number-unit-input>-->
-     <!--   </div>-->
      
-     <div class='highlight-card'>
+       <div class='highlight-card'>
 		    <div class='card-title'>What's Next</div>
 		    <div class='card-text'>With the coating pan picked out we can not determine the 
 		    amount of tablets to coat. Next we will look at some the tablets batch and determine
@@ -205,6 +177,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
       
       <div class='right-column'>
+        
         <div class='highlight-card'>
           <div class='card-title'>Coating Pan Library</div>
           <div class='card-text'>The library includes a list of coating pans with predefined measurements. The library is based on coating pans found 
@@ -221,14 +194,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <text-input title='Company' value='[[companyName]]' on-value-changed='companyNameChanged'></text-input>
           <text-input title='Location' value='[[locationName]]' on-value-changed='locationNameChanged'></text-input>
         </div>
-        
-        <!--<div class='highlight-card'>-->
-        <!--  <div class='card-title'>Save Custom Pan</div>-->
-        <!--  <div class='card-text'>-->
-        <!--    Looks like you are creating a custom coating pan. Save it to reference it again later.-->
-        <!--  </div>-->
-        <!--  <paper-button class='highlight-button'on-tap='_saveCoatingPan'>Save</paper-button>-->
-        <!--</div>-->
         
       </div>
       
