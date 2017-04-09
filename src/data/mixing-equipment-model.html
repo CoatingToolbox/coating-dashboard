@@ -1,0 +1,58 @@
+<script>
+
+    class MixingEquipment{
+
+        constructor() {
+            this.vesselName = '2 Liter Beaker';
+            this.vesslDescription = 'Standard Glass Beaker';
+            this.vesselDiameter = 0.1524;
+            this.vesselBottomType = 'flat';
+            this.vesselHeight = 0.2286;
+            
+            this.bladeDiameter = 0.07;
+            this.bladeType = 'hydrofoil';
+        }
+
+        get vesselRadius() {
+            return this.vesselDiameter / 2;
+        }
+        get volume() {
+            let volume;
+            switch (this.vesselBottomType.toLowerCase()) {
+                case 'flat':
+                    volume = this.calcCylinderVolume(this.vesselRadius, this.vesselHeight);
+                    break;
+            }
+            return volume;
+        }
+        get idealDimensions() {
+            return (this.vesselDiameter < this.vesselHeight);
+        }
+        get idealBlade() {
+            return (this.vesselDiameter / 4 <= this.bladeDiameter && this.vesselDiameter / 3 >= this.vesselDiameter);
+        }
+        get maxVolume() {
+            let volume;
+            let height = (this.vesselBottomType < this.vesselHeight) ? this.vesselDiameter : this.vesselDiameter * .8;
+            switch (this.vesselBottomType) {
+                case 'flat':
+                    volume = this.calcCylinderVolume(this.vesselRadius, height);
+            }
+            return volume;
+        }
+        get minVolume() {
+            let volume;
+            let height = (this.vesselDiameter < this.height) ? this.vesselDiameter * .5 : this.vesselDiameter * .5;
+            switch (this.vesselBottomType) {
+                case 'flat':
+                    volume = this.calcCylinderVolume(this.vesselRadius, height);
+                    break;
+            }
+            return volume;
+        }
+        
+        calcCylinderVolume(radius, height) {
+            return Math.PI * Math.pow(radius, 2) * height;
+        }
+    }
+</script>
