@@ -51,24 +51,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class='card-title'>Inputs</div>
 					<number-unit-input
       	  	title='Vessel Diameter' 
-    			  value='[[vesselDiameter]]' 
-    			  type='length' 
+    			  value='[[mixer.vesselDiameter]]' 
+    			  type='{{lengthUnits}}' 
     			  selected-units='in'
     			  details='The diameter of the mixing vessel opening'
       	  	on-value-changed='vesselDiameterChanged'>
     			</number-unit-input>
 					<number-unit-input
       	  	title='Vessel Height' 
-    			  value='[[vesselHeight]]' 
-    			  type='length' 
+    			  value='[[mixer.vesselHeight]]' 
+    			  type='{{lengthUnits}}' 
     			  selected-units='in'
     			  details='The height of the mixing vessel'
       	  	on-value-changed='vesselHeightChanged'>
     			</number-unit-input>
 					<number-unit-input
       	  	title='Blade Diameter' 
-    			  value='[[bladeDiameter]]' 
-    			  type='length' 
+    			  value='[[mixer.bladeDiameter]]' 
+    			  type='{{lengthUnits}}' 
     			  selected-units='in'
     			  details='The diameter of the mixing blade'
       	  	on-value-changed='bladeDiameterChanged'>
@@ -85,24 +85,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			<number-unit-input 
       	    no-input
     				title='Full Volume' 
-    				value='[[vesselFullVolume]]' 
-    				type='volume' 
+    				value='[[mixer.volume]]' 
+    				type='{{volumeUnits}}' 
     				selected-units='l' 
     				details='The volume of the vessel to the very top'>
     			</number-unit-input>
     			<number-unit-input 
       	    no-input
     				title='Max Volume' 
-    				value='[[vesselMaxVolume]]' 
-    				type='volume' 
+    				value='[[mixer.maxVolume]]' 
+    				type='{{volumeUnits}}' 
     				selected-units='l' 
     				details='The recommended max volume for mixing'>
     			</number-unit-input>
     			<number-unit-input 
       	    no-input
     				title='Min Volume' 
-    				value='[[vesselMinVolume]]' 
-    				type='volume' 
+    				value='[[mixer.minVolume]]' 
+    				type='{{volumeUnits}}' 
     				selected-units='l' 
     				details='The recommended min volume for mixing'>
     			</number-unit-input>
@@ -132,93 +132,63 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='card'>
           <div class='card-title'>Information</div>
-          <text-input title='Vessel Name' value='[[vesselName]]' on-value-changed=''></text-input>
-          <text-input title='Description' value='[[vesslDescription]]' on-value-changed=''></text-input>
+          <text-input title='Vessel Name' value='[[mixer.vesselName]]' on-value-changed='vesselNameChanged'></text-input>
+          <text-input title='Description' value='[[mixer.vesslDescription]]' on-value-changed='vesselDescriptionChanged'></text-input>
         </div>
     </div>
     </div>
   </template>
 
   <script>
-    class MixingEquipmentPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
+    class MixingEquipmentPage extends CoatingDashboard.ReduxMixin(Polymer.MutableData(Polymer.Element)) {
       
       static get is() { return 'mixing-equipment-page'; }
       
-      
       static get properties() {
         return {
-          vesselName: {
-            type: String,
-            statePath: 'mixing.vesselName'
-          },
-          vesselDescription: {
-            type: String,
-            statePath: 'mixing.vesselDescription'
-          },
-          vesselDiameter: {
-            type: Number,
-            statePath: 'mixing.vesselDiameter'
-          },
-          vesselHeight: {
-            type: Number,
-            statePath: 'mixing.vesselHeight'
-          },
-          vesselBottomType: {
-            type: Number,
-            statePath: 'mixing.vesselBottomType'
-          },
-          bladeDiameter: {
-            type: Number,
-            statePath: 'mixing.bladeDiameter'
-          },
-          bladeType: {
-            type: String,
-            statePath: 'mixing.bladeType'
-          },
-          vesselFullVolume: {
-            type: Number,
-            statePath: 'mixing.volume'
-          },
-          vesselMaxVolume: {
-            type: Number,
-            statePath: 'mixing.maxVolume'
-          }, 
-          vesselMinVolume: {
-            type: Number,
-            statePath: 'mixing.minVolume'
-          },
-          isIdealDimensions: {
-            type: Boolean,
-            statePath: 'mixing.idealDimensions'
-          },
-          isIdealBlade: {
-            type: Boolean,
-            statePath: 'mixing.idealBlade'
-          }
+          mixer: {type: Object, statePath: 'mixer'},
+          lengthUnits: {type: String, value: 'in'},
+          volumeUnits: {type: String, value: 'l'}
         };
       }
       
-      vesselDiameterChanged(e) {
+      static get observers() {
+        return [
+          'log(mixer.vesselHeight)'];
+      }
+            
+      log(e) {
+        console.log(e);
+      }
+      dispatchReduxReducer() {
         this.dispatch({
-          type: "SET_MIXING_VESSEL_DIAMETER",
-          value: e.detail.value
+          type: "SET_MIXER",
+          value: this.mixer
         });
+      }
+      vesselDiameterChanged(e) {
+        this.mixer.vesselDiameter = e.detail.value;
+        this.dispatchReduxReducer();
       }
       vesselHeightChanged(e) {
-        this.dispatch({
-          type: "SET_MIXING_VESSEL_HEIGHT",
-          value: e.detail.value
-        });
+        this.mixer.vesselHeight = e.detail.value;
+        this.dispatchReduxReducer();
+      }
+      vesselNameChanged(e) {
+        this.mixer.vesselName = e.detail.value;
+        this.dispatchReduxReducer();
+      }
+      vesselDescriptionChanged(e) {
+        this.mixer.vesselDescription = e.detail.value;
+        this.dispatchReduxReducer();
       }
       bladeDiameterChanged(e) {
-        this.dispatch({
-          type: "SET_MIXING_BLADE_DIAMETER",
-          value: e.detail.value
-        });
+        this.mixer.bladeDiameter = e.detail.value;
+        this.dispatchReduxReducer();
       }
       
       gotoNext() {
-        window.location = '#/mixing-equipment';
+        // window.location = '#/mixing-equipment';
       }
     }
 

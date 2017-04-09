@@ -71,12 +71,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </div>
     
-    <warning-chip show='[[isOverFilled]]'>
+    <warning-chip show='[[pan.isOverFilled]]'>
       <div class='warning-text'>
         Batch Volume exceed maximum working volume. Considering lower batch size or choosing a bigger coating pan.
       </div>
     </warning-chip>
-    <warning-chip show='[[isUnderFilled]]'>
+    <warning-chip show='[[pan.isUnderFilled]]'>
       <div class='warning-text'>
         Batch Volume is below the recommended minimum working volume. Considering a higher batch size or choosing a bigger coating pan.
       </div>
@@ -90,7 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class='card-title'>Inputs</div>
 					<number-unit-input
       	  	title='Bulk Density' 
-    			  value='[[density]]' 
+    			  value='[[batch.density]]' 
     			  type='density' 
     			  selected-units='g/ml'
     			  details='The bulk denisty of batch'
@@ -98,7 +98,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			</number-unit-input>
       	  <number-unit-input 
     				title='Weight' 
-    				value='[[weight]]' 
+    				value='[[batch.weight]]' 
     				type='weight' 
     				selected-units='kg' 
     				details='The weight of material to coat' 
@@ -119,7 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					<number-unit-input
 					  no-input
       	  	title='Tablet Count' 
-    			  value='[[tabletCount]]' 
+    			  value='[[batch.count]]' 
     			  type='' 
     			  selected-units='tabs'
     			  details='The number of tablets in the batch'>
@@ -127,7 +127,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			<number-unit-input 
       	    no-input
     				title='Surface Area' 
-    				value='[[surfaceArea]]' 
+    				value='[[batch.surfaceArea]]' 
     				type='volume' 
     				selected-units='m2' 
     				details='The volume of the batch'>
@@ -135,7 +135,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			<number-unit-input 
       	    no-input
     				title='Volume' 
-    				value='[[volume]]' 
+    				value='[[batch.volume]]' 
     				type='volume' 
     				selected-units='l' 
     				details='The volume of the batch'>
@@ -169,24 +169,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             
             <coating-pan-graphic
               front-view
-              pan-diameter='[[panDiameter]]'
-              opening-diameter='[[openingDiameter]]'
-              wall-width='[[wallWidth]]'
-              brim-width='[[brimWidth]]'
-              fill-height='[[fillHeight]]'
-              fill-width='[[fillWidth]]'
-              fill-length='[[fillLength]]'>
+              pan-diameter='[[pan.panDiameter]]'
+              opening-diameter='[[pan.openingDiameter]]'
+              wall-width='[[pan.wallWidth]]'
+              brim-width='[[pan.brimWidth]]'
+              fill-height='[[pan.fillHeight]]'
+              fill-width='[[pan.fillWidth]]'
+              fill-length='[[pan.fillLength]]'>
             </coating-pan-graphic>
             
             <coating-pan-graphic
               side-view
-              pan-diameter='[[panDiameter]]'
-              opening-diameter='[[openingDiameter]]'
-              wall-width='[[wallWidth]]'
-              brim-width='[[brimWidth]]'
-              fill-height='[[fillHeight]]'
-              fill-width='[[fillWidth]]'
-              fill-length='[[fillLength]]'>
+              pan-diameter='[[pan.panDiameter]]'
+              opening-diameter='[[pan.openingDiameter]]'
+              wall-width='[[pan.wallWidth]]'
+              brim-width='[[pan.brimWidth]]'
+              fill-height='[[pan.fillHeight]]'
+              fill-width='[[pan.fillWidth]]'
+              fill-length='[[pan.fillLength]]'>
             </coating-pan-graphic>
             
           </div>
@@ -196,7 +196,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 					<number-unit-input
 					  no-input
       	  	title='Fill Height' 
-    			  value='[[fillHeight]]' 
+    			  value='[[pan.fillHeight]]' 
     			  type='length' 
     			  selected-units='{{lengthUnits}}'
     			  details='The maximum bed height'>
@@ -204,7 +204,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			<number-unit-input
 					  no-input
       	  	title='Fill to Brim' 
-    			  value='[[fillToBrim]]' 
+    			  value='[[pan.fillToBrim]]' 
     			  type='length' 
     			  selected-units='{{lengthUnits}}'
     			  details='The distance between the product bed and the brim opening'>
@@ -212,7 +212,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     		<number-unit-input
 					  no-input
       	  	title='Fill Width' 
-    			  value='[[fillWidth]]' 
+    			  value='[[pan.fillWidth]]' 
     			  type='length' 
     			  selected-units='{{lengthUnits}}'
     			  details='The maximum width of the product bed on the surface'>
@@ -223,7 +223,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    class BatchPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
+    class BatchPage extends CoatingDashboard.ReduxMixin(Polymer.MutableData(Polymer.Element)) {
       
       static get is() { return 'batch-page'; }
       
@@ -291,85 +291,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
       static get properties() {
         return {
-          chart: {
-            type: Object
-          },
+          chart: {type: Object},
           selectedChart: {type: Number, value: 0},
-          weight: {
-            type: Number,
-            statePath: 'batch.weight',
-          },
-          density: {
-            type: Number,
-            statePath: 'batch.density'
-          },
-          tabletWeight: {
-            type: Number,
-            statePath: 'tablet.weight'
-          },
-          volume: {
-            type: Number,
-            statePath: 'batch.volume'
-          },
-          tabletCount: {
-            type: Number,
-            statePath: 'batch.count'
-          },
-          surfaceArea: {
-            type: Number,
-            statePath: 'batch.surfaceArea'
-          },
-          maxFillVolume: {
-            type: Number,
-            statePath: 'pan.maxFillVolume'
-          },
-          minFillVolume: {type: Number, statePath: 'pan.minFillVolume'},
-          panDiameter: {
-            type: Number,
-            statePath: 'pan.panDiameter'
-          },
-          openingDiameter: {
-            type: Number,
-            statePath: 'pan.openingDiameter'
-          },
-          wallWidth: {
-            type: Number,
-            statePath: 'pan.wallWidth'
-          },
-          brimWidth: {
-            type: Number,
-            statePath: 'pan.brimWidth'
-          },
-          fillWidth: {
-            type: Number,
-            statePath: 'pan.fillWidth'
-          },
-          fillHeight: {
-            type: Number,
-            statePath: 'pan.fillHeight'
-          },
-          fillLength: {
-            type: Number,
-            statePath: 'pan.fillLength'
-          },
-          fillToBrim: {
-            type: Number,
-            statePath: 'pan.fillToBrim'
-          },
-          isOverFilled: { type: Boolean, statePath: 'pan.isOverFilled' },
-          isUnderFilled: { type: Boolean, statePath: 'pan.isUnderFilled' },
-          lengthUnits: {
-            type: String,
-            value: 'in'
-          }
+          batch: {type: Object, statePath: 'batch'},
+          pan: {type: Object, statePath: 'pan'},
+          lengthUnits: {type: String, value: 'in'}
         };
       }
       
       static get observers() {
         return [
           'updateChartAxis(selectedChart, chart)',
-          'updateChartTrendLine(weight, density, selectedChart, chart)',
-          'updateChartPoint(weight, density, volume, selectedChart, chart)'
+          'updateChartTrendLine(batch.weight, batch.density, selectedChart, chart)',
+          'updateChartPoint(batch.weight, batch.density, batch.volume, selectedChart, chart)'
         ];
       }
       updateChartAxis(selectedChart, chart) {
@@ -399,11 +333,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         switch(selectedChart) {
           case 1:
-            let minWeight = this.minFillVolume * density / 1000;
-            vals.push({x: minWeight, y: this.minFillVolume * 1000});
+            let minWeight = this.pan.minFillVolume * density / 1000;
+            vals.push({x: minWeight, y: this.pan.minFillVolume * 1000});
             
-            let maxWeight = this.maxFillVolume * density / 1000;
-            vals.push({x: maxWeight, y: this.maxFillVolume * 1000});
+            let maxWeight = this.pan.maxFillVolume * density / 1000;
+            vals.push({x: maxWeight, y: this.pan.maxFillVolume * 1000});
             break;
           
           case 0:
@@ -443,22 +377,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       
       weightChanged(e) {
-        this.dispatch({
-          type: 'SET_BATCH_WEIGHT',
-          value: e.detail.value
-        });
+        this.batch.weight = e.detail.value;
+        this.dispatchReduxReducer();
       }
       densityChanged(e) {
+        this.batch.density = e.detail.value;
+        this.dispatchReduxReducer();
+      }
+      dispatchReduxReducer() {
         this.dispatch({
-          type: 'SET_BATCH_DENSITY',
-          value: e.detail.value
+          type: "SET_BATCH",
+          value: this.batch
         });
       }
-      
       recommendWeight() {
-        this.dispatch({
-				  type: 'CALCULATE_BATCH_WEIGHT'
-			  });
+        this.batch.weight = this.pan.maxFillVolume * this.batch.density;
+        this.dispatchReduxReducer();
       }
       
       gotoNext() {

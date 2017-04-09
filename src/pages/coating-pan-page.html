@@ -52,12 +52,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </div>
     
-    <warning-chip show='[[isOverFilled]]'>
+    <warning-chip show='[[pan.isOverFilled]]'>
       <div class='warning-text'>
         Batch Volume exceed maximum working volume. Considering lower batch size or choosing a bigger coating pan.
       </div>
     </warning-chip>
-    <warning-chip show='[[isUnderFilled]]'>
+    <warning-chip show='[[pan.isUnderFilled]]'>
       <div class='warning-text'>
         Batch Volume is below the recommended minimum working volume. Considering a higher batch size or choosing a bigger coating pan.
       </div>
@@ -71,7 +71,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class='card-title'>Inputs</div>
           <number-unit-input 
     	    	title='Main Diameter' 
-    	    	value='[[panDiameter]]' 
+    	    	value='[[pan.panDiameter]]' 
     	    	type='length'
     	    	selected-units='{{lengthUnits}}'
     	    	details='The main diameter of the coating pan'
@@ -79,7 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     	    </number-unit-input>
     	    <number-unit-input 
     	    	title='Opening' 
-    	    	value='[[openingDiameter]]' 
+    	    	value='[[pan.openingDiameter]]' 
     	    	type='length'
     	    	details='The diameter of the pan opening'
     	    	selected-units='{{lengthUnits}}'
@@ -87,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     	    </number-unit-input>
     	    <number-unit-input 
     	    	title='Depth at Brim' 
-    	    	value='[[brimWidth]]' 
+    	    	value='[[pan.brimWidth]]' 
     	    	type='length'
     	    	selected-units='{{lengthUnits}}'
     	    	details='The depth from the front brim to the back'
@@ -95,7 +95,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     	    </number-unit-input>
     	    <number-unit-input 
     	    	title='Wall Depth' 
-    	    	value='[[wallWidth]]' 
+    	    	value='[[pan.wallWidth]]' 
     	    	type='length'
     	    	details='The depth of the coating pan along the perforated pan wall'
     	    	selected-units='{{lengthUnits}}'
@@ -109,24 +109,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             
             <coating-pan-graphic
               front-view
-              pan-diameter='[[panDiameter]]'
-              opening-diameter='[[openingDiameter]]'
-              wall-width='[[wallWidth]]'
-              brim-width='[[brimWidth]]'
-              fill-height='[[fillHeight]]'
-              fill-width='[[fillWidth]]'
-              fill-length='[[fillLength]]'>
+              pan-diameter='[[pan.panDiameter]]'
+              opening-diameter='[[pan.openingDiameter]]'
+              wall-width='[[pan.wallWidth]]'
+              brim-width='[[pan.brimWidth]]'
+              fill-height='[[pan.fillHeight]]'
+              fill-width='[[pan.fillWidth]]'
+              fill-length='[[pan.fillLength]]'>
             </coating-pan-graphic>
             
             <coating-pan-graphic
               side-view
-              pan-diameter='[[panDiameter]]'
-              opening-diameter='[[openingDiameter]]'
-              wall-width='[[wallWidth]]'
-              brim-width='[[brimWidth]]'
-              fill-height='[[fillHeight]]'
-              fill-width='[[fillWidth]]'
-              fill-length='[[fillLength]]'>
+              pan-diameter='[[pan.panDiameter]]'
+              opening-diameter='[[pan.openingDiameter]]'
+              wall-width='[[pan.wallWidth]]'
+              brim-width='[[pan.brimWidth]]'
+              fill-height='[[pan.fillHeight]]'
+              fill-width='[[pan.fillWidth]]'
+              fill-length='[[pan.fillLength]]'>
             </coating-pan-graphic>
             
           </div>
@@ -139,7 +139,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               details='The capacity of the pan to the brim'
               no-input 
               decimals='1' 
-              value='[[brimVolume]]' 
+              value='[[pan.brimVolume]]' 
               type='volume' 
               selected-units='{{volumeUnits}}'>
             </number-unit-input>
@@ -148,7 +148,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               details='The max working volume determined as filled upto 1" from the brim'
               no-input 
               decimals='1' 
-              value='[[maxFillVolume]]' 
+              value='[[pan.maxFillVolume]]' 
               type='volume' 
               selected-units='{{volumeUnits}}'>
             </number-unit-input>
@@ -157,7 +157,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               details='The min working volume determined as 60% full of brim height'
               no-input 
               decimals='1' 
-              value='[[minFillVolume]]' 
+              value='[[pan.minFillVolume]]' 
               type='volume' 
               selected-units='{{volumeUnits}}'>
             </number-unit-input>
@@ -188,11 +188,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='card'>
           <div class='card-title'>Information</div>
-          <text-input title='Vendor' value='[[vendorName]]' on-value-changed='vendorNameChanged'></text-input>
-          <text-input title='Equipment' value='[[equipmentName]]' on-value-changed='equipmentNameChanged'></text-input>
-          <text-input title='Nickname' value='[[nickname]]' on-value-changed='nicknameChanged'></text-input>
-          <text-input title='Company' value='[[companyName]]' on-value-changed='companyNameChanged'></text-input>
-          <text-input title='Location' value='[[locationName]]' on-value-changed='locationNameChanged'></text-input>
+          <text-input title='Vendor' value='[[pan.vendorName]]' on-value-changed='vendorNameChanged'></text-input>
+          <text-input title='Equipment' value='[[pan.equipmentName]]' on-value-changed='equipmentNameChanged'></text-input>
+          <text-input title='Nickname' value='[[pan.nickname]]' on-value-changed='nicknameChanged'></text-input>
+          <text-input title='Company' value='[[pan.companyName]]' on-value-changed='companyNameChanged'></text-input>
+          <text-input title='Location' value='[[pan.locationName]]' on-value-changed='locationNameChanged'></text-input>
         </div>
         
       </div>
@@ -201,99 +201,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    class CoatingPanPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
+    class CoatingPanPage extends CoatingDashboard.ReduxMixin(Polymer.MutableData(Polymer.Element)) {
       
       static get is() { return 'coating-pan-page'; }
       
       static get properties() {
         return {
           // properties from redux mixin
-          panDiameter: {
-            type: Number,
-            statePath: 'pan.panDiameter'
+          pan: {
+            type: Object,
+            statePath: 'pan'
           },
-          openingDiameter: {
-            type: Number,
-            statePath: 'pan.openingDiameter'
-          },
-          wallWidth: {
-            type: Number,
-            statePath: 'pan.wallWidth'
-          },
-          brimWidth: {
-            type: Number,
-            statePath: 'pan.brimWidth'
-          },
-          fillVolume: {
-            type: Number,
-            statePath: 'pan.fillVolume'
-          },
-          vendorName: {
-            type: String,
-            statePath: 'pan.vendorName'
-          },
-          equipmentName: {
-            type: String,
-            statePath: 'pan.equipmentName'
-          },
-          nickname: {
-            type: String,
-            statePath: 'pan.nickname'
-          },
-          companyName: {
-            type: String,
-            statePath: 'pan.companyName'
-          },
-          locationName: {
-            type: String,
-            statePath: 'pan.locationName'
-          },
-          brimVolume: {
-            type: Number,
-            statePath: 'pan.brimVolume'
-          },
-          minFillVolume: {
-            type: Number,
-            statePath: 'pan.minFillVolume'
-          },
-          maxFillVolume: {
-            type: Number,
-            statePath: 'pan.maxFillVolume'
-          },
-          fillWidth: {
-            type: Number,
-            statePath: 'pan.fillWidth'
-          },
-          fillToBrim: {
-            type: Number,
-            statePath: 'pan.fillToBrim'
-          },
-          fillHeight: {
-            type: Number,
-            statePath: 'pan.fillHeight'
-          },
-          fillLength: {
-            type: Number,
-            statePath: 'pan.fillLength'
-          },
-          maxFillHeight: {
-            type: Number,
-            statePath: 'pan.maxFillHeight'
-          },
-          minFillHeight: {
-            type: Number,
-            statePath: 'pan.minFillHeight'
-          },
-          brimHeight: {
-            type: Number,
-            statePath: 'pan.brimHeight'
-          },
-          sideWallSlope: {
-            type: Number,
-            statePath: 'pan.sideWallSlope'
-          },
-          isOverFilled: { type: Boolean, statePath: 'pan.isOverFilled' },
-          isUnderFilled: { type: Boolean, statePath: 'pan.isUnderFilled' },
           lengthUnits: {
             type: String,
             value: 'in'
@@ -307,60 +225,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
       // User input functions
       panDiameterChanged(e){
-        this.dispatch({
-          type: 'SET_PAN_DIAMETER',
-          value: e.detail.value
-        });
+        this.pan.panDiameter = e.detail.value;
+        this.dispatchReduxReducer();
       }
       openingDiameterChanged(e){
-        this.dispatch({
-          type: 'SET_PAN_OPENING_DIAMETER',
-          value: e.detail.value
-        });
+        this.pan.openingDiameter = e.detail.value;
+        this.dispatchReduxReducer();
       }
       wallWidthChanged(e){
-        this.dispatch({
-          type: 'SET_PAN_WALL_WIDTH',
-          value: e.detail.value
-        });
+        this.pan.wallWidth = e.detail.value;
+        this.dispatchReduxReducer();
       }
       brimWidthChanged(e){
-        this.dispatch({
-          type: 'SET_PAN_BRIM_WIDTH',
-          value: e.detail.value
-        });
+        this.pan.brimWidth = e.detail.value;
+        this.dispatchReduxReducer();
       }
       vendorNameChanged(e){
-        this.dispatch({
-          type: 'SET_PAN_VENDOR_NAME',
-          value: e.detail.value
-        });
+        this.pan.vendorName = e.detail.value;
+        this.dispatchReduxReducer();
       }
       equipmentNameChanged(e){
-        this.dispatch({
-          type: 'SET_PAN_EQUIPMENT_NAME',
-          value: e.detail.value
-        });
+        this.pan.equipmentName = e.detail.value;
+        this.dispatchReduxReducer();
       }
       nicknameChanged(e){
-        this.dispatch({
-          type: 'SET_PAN_NICKNAME',
-          value: e.detail.value
-        });
+        this.pan.nickname = e.detail.value;
+        this.dispatchReduxReducer();
       }
       companyNameChanged(e){
-        this.dispatch({
-          type: 'SET_PAN_COMPANY_NAME',
-          value: e.detail.value
-        });
+        this.pan.companyName = e.detail.value;
+        this.dispatchReduxReducer();
       }
       locationNameChanged(e){
-        this.dispatch({
-          type: 'SET_PAN_LOCATION_NAME',
-          value: e.detail.value
-        });
+        this.pan.locationName = e.detail.value;
+        this.dispatchReduxReducer();
       }
       
+      dispatchReduxReducer() {
+        this.dispatch({
+          type: "SET_PAN",
+          value: this.pan
+        });
+      }
       gotoLibrary() {
         window.location = '#/coating-pan-library';
       }

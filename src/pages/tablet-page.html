@@ -58,21 +58,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </div>
     
-    <!--<div class='warning-chip' hidden=''>-->
-    <!--  <iron-icon icon='my-icons:warning'></iron-icon>-->
-    <!--  <div class='warning-text'>-->
-    <!--    Batch Volume exceed maximum working volume. Considering lower batch size or choosing a bigger coating pan.-->
-    <!--  </div>-->
-    <!--</div>-->
-    
-    <!--<div class='warning-chip'>-->
-    <!--  <iron-icon icon='my-icons:warning'></iron-icon>-->
-    <!--  <div class='warning-text'>-->
-    <!--    Looks like you are creating a custom coating pan. Save it to reference it again later.-->
-    <!--  </div>-->
-    <!--  <paper-button on-tap='_saveCoatingPan'>Save</paper-button>-->
-    <!--</div>-->
-    
     <div id='main-container'>
       
       <div id='left-column'>
@@ -81,14 +66,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class='card-title'>Inputs</div>
           <dropdown-input
     				title='Shape' 
-    				selected-item='[[shape]]'
+    				selected-item='[[tablet.shape]]'
     				items='["round", "oval", "caplet"]'
     				on-value-changed='shapeChanged' 
     				details='The shape of the tablet'>
     			</dropdown-input>
           <number-unit-input
     				title='Length' 
-    				value='[[length]]' 
+    				value='[[tablet.length]]' 
     				type='length' 
     				selected-units='{{lengthUnits}}' 
     				on-value-changed='lengthChanged' 
@@ -96,16 +81,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			</number-unit-input>
       	  <number-unit-input 
       	  	title='Width'
-      	  	value='[[width]]'
+      	  	value='[[tablet.width]]'
       	  	type='length'
       	  	selected-units='{{lengthUnits}}'
       	  	on-value-changed='widthChanged'
       	  	details='The tablets shortest  dimension or diameter'
-      	  	hidden$='[[isRound(shape)]]'>
+      	  	hidden$='[[isRound(tablet.shape)]]'>
       	  </number-unit-input>
     			<number-unit-input 
     				title='Total Thickness' 
-    				value='[[totalThickness]]' 
+    				value='[[tablet.totalThickness]]' 
     				type='length' 
     				selected-units='{{lengthUnits}}' 
     				details='The total thickness of the tablet' 
@@ -113,7 +98,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			</number-unit-input>
       	  <number-unit-input 
       	  	title='Band Thickness' 
-      	  	value='[[bandThickness]]' 
+      	  	value='[[tablet.bandThickness]]' 
       	  	type='length' 
       	  	selected-units='{{lengthUnits}}'  
       	  	details='The thickness at the tablet belly band' 
@@ -121,7 +106,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       	  </number-unit-input>
       	  <number-unit-input 
     				title='Weight' 
-    				value='[[weight]]' 
+    				value='[[tablet.weight]]' 
     				type='weight' 
     				selected-units='mg' 
     				details='The average tablet weight' 
@@ -135,30 +120,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             
             <tablet-graphic
               top-view
-              shape='[[shape]]'
-              width='[[width]]'
-              length='[[length]]'
-              band-thickness='[[bandThickness]]'
-              cup-thickness='[[cupThickness]]'>
+              shape='[[tablet.shape]]'
+              width='[[tablet.width]]'
+              length='[[tablet.length]]'
+              band-thickness='[[tablet.bandThickness]]'
+              cup-thickness='[[tablet.cupThickness]]'>
             </tablet-graphic>
             
             <tablet-graphic
               length-view
-              shape='[[shape]]'
-              width='[[width]]'
-              length='[[length]]'
-              band-thickness='[[bandThickness]]'
-              cup-thickness='[[cupThickness]]'>
+              shape='[[tablet.shape]]'
+              width='[[tablet.width]]'
+              length='[[tablet.length]]'
+              band-thickness='[[tablet.bandThickness]]'
+              cup-thickness='[[tablet.cupThickness]]'>
             </tablet-graphic>
             
             <tablet-graphic
               width-view
-              hidden$='[[isRound(shape)]]'
-              shape='[[shape]]'
-              width='[[width]]'
-              length='[[length]]'
-              band-thickness='[[bandThickness]]'
-              cup-thickness='[[cupThickness]]'>
+              hidden$='[[isRound(tablet.shape)]]'
+              shape='[[tablet.shape]]'
+              width='[[tablet.width]]'
+              length='[[tablet.length]]'
+              band-thickness='[[tablet.bandThickness]]'
+              cup-thickness='[[tablet.cupThickness]]'>
             </tablet-graphic>
             
           </div>
@@ -169,29 +154,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			<number-unit-input  
         	  no-input  
       	  	title='Surface Area' 
-    			  value='[[totalArea]]' 
+    			  value='[[tablet.totalArea]]' 
     			  type='area' 
     			  selected-units='{{areaUnits}}'
-    			  details='The estimated surface area of a single tabet'
-      	  	on-value-changed='surfaceAreaChanged'>
+    			  details='The estimated surface area of a single tabet'>
     			</number-unit-input>
     			<number-unit-input  
         	  no-input  
       	  	title='Volume' 
-    			  value='[[totalVolume]]' 
+    			  value='[[tablet.totalVolume]]' 
     			  type='volume' 
     			  selected-units='{{volumeUnits}}'
-    			  details='The estiamted volume of a single tablet'
-      	  	on-value-changed='volumeChanged'>
+    			  details='The estiamted volume of a single tablet'>
     			</number-unit-input>
     			<number-unit-input  
         	  no-input  
       	  	title='Density' 
-    			  value='[[compressedDensity]]' 
+    			  value='[[tablet.compressedDensity]]' 
     			  type='density' 
     			  selected-units='g/ml'
-    			  details='The estiamted compressed denisty of the tablet'
-      	  	on-value-changed='compressedDensityChanged'>
+    			  details='The estiamted compressed denisty of the tablet'>
     			</number-unit-input>
 			  </div>
 			  
@@ -200,7 +182,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			<number-unit-input 
     			  no-input  
     			  title='Cup Depth' 
-    			  value='[[cupThickness]]' 
+    			  value='[[tablet.cupThickness]]' 
     			  type='length' 
     			  selected-units='{{lengthUnits}}' 
     			  details='The calculated depth of the tooling cup'>
@@ -208,7 +190,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         	<number-unit-input 
         	  no-input  
         	  title='Cup Area' 
-        	  value='[[cupArea]]' 
+        	  value='[[tablet.cupArea]]' 
         	  type='area' 
         	  selected-units='mm2' 
         	  details='The estiamted surface area of the cup or tablet concavity'>
@@ -216,7 +198,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         	<number-unit-input 
         	  no-input  
         	  title='Cup Volume' 
-        	  value='[[cupVolume]]' 
+        	  value='[[tablet.cupVolume]]' 
         	  type='volume' 
         	  selected-units='mm3' 
         	  details='The estimated volume of the cup or tablet concavity'>
@@ -248,10 +230,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='card'>
           <div class='card-title'>Information</div>
-          <text-input title='Product' value='[[productName]]' on-value-changed='productNameChanged'></text-input>
-          <text-input title='Formulation' value='[[formulationName]]' on-value-changed='formulationNameChanged'></text-input>
-          <text-input title='Tooling' value='[[toolingName]]' on-value-changed='toolingNameChanged'></text-input>
-          <text-input title='Company' value='[[companyName]]' on-value-changed='companyNameChanged'></text-input>
+          <text-input title='Product' value='[[tablet.productName]]' on-value-changed='productNameChanged'></text-input>
+          <text-input title='Formulation' value='[[tablet.formulationName]]' on-value-changed='formulationNameChanged'></text-input>
+          <text-input title='Tooling' value='[[tablet.toolingName]]' on-value-changed='toolingNameChanged'></text-input>
+          <text-input title='Company' value='[[tablet.companyName]]' on-value-changed='companyNameChanged'></text-input>
         </div>
 			  
       </div>
@@ -259,7 +241,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    class TabletPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
+    class TabletPage extends CoatingDashboard.ReduxMixin(Polymer.MutableData(Polymer.Element)) {
       
       static get is() { return 'tablet-page'; }
       
@@ -268,69 +250,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           user: {
             type: Object
           },
-          shape: {
-            type: String,
-            statePath: 'tablet.shape'
-          }, 
-          length: {
-            type: Number,
-            statePath: 'tablet.length'
-          }, 
-          width: {
-            type: Number,
-            statePath: 'tablet.width'
-          }, 
-          totalThickness: {
-            type: Number,
-            statePath: 'tablet.totalThickness'
-          }, 
-          bandThickness: {
-            type: Number,
-            statePath: 'tablet.bandThickness'
-          }, 
-          weight: {
-            type: Number,
-            statePath: 'tablet.weight'
-          }, 
-          totalArea: {
-            type: Number,
-            statePath: 'tablet.totalArea',
-          },
-          totalVolume: {
-            type: Number,
-            statePath: 'tablet.totalVolume'
-          },
-          compressedDensity: {
-            type: Number,
-            statePath: 'tablet.compressedDensity'
-          },
-          cupArea: {
-            type: Number,
-            statePath: 'tablet.cupArea'
-          },
-          cupVolume: {
-            type: Number,
-            statePath: 'tablet.cupVolume'
-          },
-          cupThickness: {
-            type: Number,
-            statePath: 'tablet.cupThickness'
-          },
-          productName: {
-            type: Number,
-            statePath: 'tablet.productName'
-          }, 
-          formulationName: {
-            type: Number,
-            statePath: 'tablet.formulationName'
-          }, 
-          companyName: {
-            type: Number,
-            statePath: 'tablet.companyName'
-          }, 
-          toolingName: {
-            type: Number,
-            statePath: 'tablet.toolingName'
+          tablet: {
+            type: Object,
+            statePath: 'tablet'
           },
           lengthUnits: {
             type: String,
@@ -351,81 +273,50 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         };
       }
       shapeChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET_SHAPE',
-          value: e.detail.value
-        });
+        this.tablet.shape = e.detail.value;
+        this.dispatchReduxReducer();
       }
       lengthChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET_LENGTH',
-          value: e.detail.value
-        });
+        this.tablet.length = e.detail.value;
+        this.dispatchReduxReducer();
       }
       widthChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET_WIDTH',
-          value: e.detail.value
-        });
+        this.tablet.width = e.detail.value;
+        this.dispatchReduxReducer();
       }
       totalThicknessChanged(e){
-        this.dispatch({
-          type: 'SET_TABLET_TOTAL_THICKNESS',
-          value: e.detail.value
-        });
+        this.tablet.totalThickness = e.detail.value;
+        this.dispatchReduxReducer();
       }
       bandThicknessChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET_BAND_THICKNESS',
-          value: e.detail.value
-        });
+        this.tablet.bandThickness = e.detail.value;
+        this.dispatchReduxReducer();
       }
       weightChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET_WEIGHT',
-          value: e.detail.value
-        });
-      }
-      surfaceAreaChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET_SURFACE_AREA',
-          value: e.detail.value
-        });
-      }
-      volumeChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET_VOLUME',
-          value: e.detail.value
-        });
-      }
-      compressedDensityChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET_COMPRESSED_DENSITY',
-          value: e.detail.value
-        });
+        this.tablet.weightChanged = e.detail.value;
+        this.dispatchReduxReducer();
       }
       productNameChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET_PRODUCT_NAME',
-          value: e.detail.value
-        });
+        this.tablet.productName = e.detail.value;
+        this.dispatchReduxReducer();
       }
       formulationNameChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET__FORMULATION_NAME',
-          value: e.detail.value
-        });
+        this.tablet.formulationName = e.detail.value;
+        this.dispatchReduxReducer();
       }
       toolingNameChanged(e) {
-        this.dispatch({
-          type: 'SET_TABLET_TOOLING_NAME',
-          value: e.detail.value
-        });
+        this.tablet.toolingName = e.detail.value;
+        this.dispatchReduxReducer();
       }
       companyNameChanged(e) {
+        this.tablet.companyName = e.detail.value;
+        this.dispatchReduxReducer();
+      }
+      
+      dispatchReduxReducer() {
         this.dispatch({
-          type: 'SET_TABLET_COMPANY_NAME',
-          value: e.detail.value
+          type: "SET_TABLET",
+          value: this.tablet
         });
       }
       

@@ -46,8 +46,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     
-    <!--<firebase-auth id="auth" user="{{user}}"></firebase-auth>-->
-    
     <div id='header-container'>
       <div id='header-card'>
         <div id='header-subhead'>Material</div>
@@ -73,7 +71,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			<!--</dropdown-input>-->
           <number-unit-input
     				title='Weight Gain' 
-    				value='[[weightGain]]' 
+    				value='[[coating.weightGain]]' 
     				type='percent' 
     				selected-units='%'
     				on-value-changed='weightGainChanged' 
@@ -81,7 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			</number-unit-input>
       	  <number-unit-input 
       	  	title='Coating Density'
-      	  	value='[[density]]'
+      	  	value='[[coating.density]]'
       	  	type='density'
       	  	selected-units='g/ml'
       	  	on-value-changed='densityChanged'
@@ -102,7 +100,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			
     			<number-unit-input 
     				title='Coating Coverage' 
-    				value='[[coatingCoverage]]' 
+    				value='[[coating.coatingCoverage]]' 
     				type='weight/area' 
     				selected-units='mg/cm2' 
     				details='The coating coverage to apply' 
@@ -110,7 +108,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     			</number-unit-input>
     			<number-unit-input 
     				title='Film Thickness' 
-    				value='[[filmThickness]]' 
+    				value='[[coating.filmThickness]]' 
     				type='length' 
     				selected-units='um' 
     				details='The film thickness applied to the tablet' 
@@ -142,8 +140,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         <div class='card'>
           <div class='card-title'>Information</div>
-          <text-input title='Product' value='[[productName]]' on-value-changed='productChanged'></text-input>
-          <text-input title='Formula' value='[[formula]]' on-value-changed='formulaChanged'></text-input>
+          <text-input title='Product' value='[[coating.productName]]' on-value-changed='productChanged'></text-input>
+          <text-input title='Formula' value='[[coating.formula]]' on-value-changed='formulaChanged'></text-input>
         </div>
         
       </div>
@@ -151,7 +149,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-    class CoatingFormulationPage extends CoatingDashboard.ReduxMixin(Polymer.Element) {
+    class CoatingFormulationPage extends CoatingDashboard.ReduxMixin(Polymer.MutableData(Polymer.Element)) {
       
       static get is() { return 'coating-formulation-page'; }
       
@@ -219,33 +217,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           user: {
             type: Object
           },
-          weightGain: {
-            type: Number,
-            statePath: 'coating.weightGain'
-          },
-          coatingCoverage: {
-            type: Number,
-            statePath: 'coating.coatingCoverage'
-          },
-          filmThickness: {
-            type: Number,
-            statePath: 'coating.filmThickness'
-          },
-          coatingWeight: {
-            type: Number,
-            statePath: 'coating.coatingWeight'
-          },
-          density: {
-            type: Number,
-            statePath: 'coating.density'
-          },
-          formula: {
-            type: Number,
-            statePath: 'coating.formula'
-          },
-          productName: {
-            type: Number,
-            statePath: 'coating.productName'
+          coating: {
+            type: Object,
+            statePath: 'coating'
           },
           selectedChart: {
             type: Number,
@@ -266,27 +240,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       
       weightGainChanged(e) {
-        this.dispatch({
-          type: "SET_COATING_WEIGHT_GAIN",
-          value: e.detail.value
-        });
+        this.coating.weightGain = e.detail.value;
+        this.dispatchReduxReducer();
       }
       densityChanged(e) {
-        this.dispatch({
-          type: "SET_COATING_DENSITY",
-          value: e.detail.value
-        });
+        this.coating.density = e.detail.value;
+        this.dispatchReduxReducer();
       }
       productChanged(e) {
-        this.dispatch({
-          type: 'SET_COATING_PRODUCT_NAME',
-          value: e.detail.value
-        });
+        this.coating.productName = e.detail.value;
+        this.dispatchReduxReducer();
       }
       formulaChanged(e) {
+        this.coating.formula = e.detail.value;
+        this.dispatchReduxReducer();
+      }
+      dispatchReduxReducer() {
         this.dispatch({
-          type: 'SET_COATING_FORMULA',
-          value: e.detail.value
+          type: "SET_COATING",
+          value: this.coating
         });
       }
       
@@ -294,7 +266,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return [
           'updateChartAxis(selectedChart, chart)',
           'updateChartTrendLine(tabletWeight, tabletArea, selectedChart, chart)',
-          'updateChartPoint(weightGain, filmThickness, coatingCoverage, selectedChart, chart)'
+          'updateChartPoint(coating.weightGain, coating.filmThickness, coating.coatingCoverage, selectedChart, chart)'
         ];
       }
       updateChartAxis(selectedChart, chart) {
@@ -324,7 +296,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           case 0:
             // max and min coating coverage are set at 3 and 6 mg/cm2
             let minCC = 3;
-            let maxCC = 6
+            let maxCC = 6;
         
             // // min and max wg are determined from current tablet surface area, tablet weight, and min and max cc;
             let minWG = minCC / tabletWeight * tabletArea * 1000;

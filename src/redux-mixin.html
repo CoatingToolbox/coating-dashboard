@@ -14,7 +14,7 @@
       batch: new Batch(), /*global Batch*/
       user: {},
       coating: new CoatingFormulation(), /*global CoatingFormulation*/
-      mixing: new MixingEquipment() /*global MixingEquipment*/
+      mixer: new MixingEquipment() /*global MixingEquipment*/
     };
     
     // sync initial values across different models
@@ -24,201 +24,55 @@
     initialState.coating.batchWeight = initialState.batch.weight;
     initialState.coating.tabletArea = initialState.tablet.totalArea;
   
+    
    const reducer = (state, action) => {
      
     if(!state) {return initialState;}
     
-    let pan = Object.assign(new CoatingPan(), state.pan);
-    let tablet = Object.assign(new Tablet(), state.tablet);
-    let batch = Object.assign(new Batch(), state.batch);
-    let coating = Object.assign(new CoatingFormulation(), state.coating);
-    let mixing = Object.assign(new MixingEquipment(), state.mixing);
-    let user = state.user;
-    
+    let updates = {};
+      
     switch(action.type) {
       
-      case 'SET_USER':
-        user = action.value;
-        break;
-    
-      case 'SET_PAN_DIAMETER':
-        pan.panDiameter = action.value;
-        break;
-      
-      case 'SET_PAN_OPENING_DIAMETER':
-        pan.openingDiameter = action.value;
-        break;
+      case "SET_USER":
+        return Object.assign({}, state, {user: action.value});
         
-      case 'SET_PAN_BRIM_WIDTH':
-        pan.brimWidth = action.value;
-        break;
+      case "SET_TABLET":
+        updates.tablet = action.value;
+        updates.batch.tabletWeight = updates.tablet.weight;
+        updates.batch.tabletSurfaceArea = updates.coating.tabletArea = updates.tablet.totalArea;
+        return Object.assign({}, state, updates);
         
-      case 'SET_PAN_WALL_WIDTH':
-        pan.wallWidth = action.value;
-        break;  
+      case "SET_COATING":
+        return Object.assign({}, state, {coating: action.value});
         
-      case 'SET_PAN_VENDOR_NAME':
-        pan.vendorName = action.value;
-        break;
-      
-      case 'SET_PAN_NICKNAME':
-        pan.nickname = action.value;
-        break;
+      case "SET_PAN":
+        return Object.assign({}, state, {pan: action.value});
         
-      case 'SET_PAN_EQUIPMENT_NAME':
-        pan.equipmentName = action.value;
-        break;  
+      case "SET_BATCH":
+        updates.batch = action.value;
+        updates = Object.assign(updates, {pan: state.pan});
+        updates.pan.fillVolume = updates.batch.volume;
+        return Object.assign({}, state, updates);
         
-      case 'SET_PAN_COMPANY_NAME':
-        pan.companyName = action.value;
-        break;  
-        
-      case 'SET_PAN_LOCATION_NAME':
-        pan.locationName = action.value;
-        break;  
-        
-      case 'SET_PAN_DESCRIPTION':
-        pan.description = action.value;
-        break; 
+      case "SET_MIXER":
+        return Object.assign({}, state, {mixer: action.value});
         
       case 'LOAD_PAN':
-        pan.panDiameter = action.value.panDiameter;
-        pan.openingDiameter = action.value.openingDiameter;
-        pan.wallWidth = action.value.wallWidth;
-        pan.brimWidth = action.value.brimWidth;
-        pan.vendorName = action.value.vendorName;
-        pan.companyName = action.value.companyName;
-        pan.locationName = action.value.locationName;
-        pan.nickname = action.value.nickname;
-        pan.equipmentName = action.value.equipmentName;
-        break;
-        
-      case 'SET_TABLET_SHAPE':
-        tablet.shape = action.value;
-        break;
-        
-      case 'SET_TABLET_LENGTH':
-        tablet.length = action.value;
-        break;
-        
-      case 'SET_TABLET_WIDTH':
-        tablet.width = action.value;
-        break;
-        
-      case 'SET_TABLET_TOTAL_THICKNESS':
-        tablet.totalThickness = action.value;
-        break;
-        
-      case 'SET_TABLET_BAND_THICKNESS':
-        tablet.bandThickness = action.value;
-        break;
-        
-      case 'SET_TABLET_WEIGHT':
-        tablet.weight = action.value;
-        break;
-        
-      case 'SET_TABLET_PRODUCT_NAME':
-        tablet.productName = action.value;
-        break;
-        
-      case 'SET_TABLET_FORMULATION_NAME':
-        tablet.formulationName = action.value;
-        break;
-        
-      case 'SET_TABLET_TOOLING_NAME':
-        tablet.toolingName = action.value;
-        break;
-        
-      case 'SET_TABLET_COMPANY_NAME':
-        tablet.companyName = action.value;
-        break;
-        
-      case 'LOAD_TABLET':
-        // tablet = Object.assign(tablet, action.tablet);
-        break;
-      
-      case 'SET_BATCH_WEIGHT':
-        batch.weight = action.value;
-        coating.batchWeight = action.value;
-        break;
-      
-      case 'CALCULATE_BATCH_WEIGHT':
-        batch.weight = pan.maxFillVolume * batch.density;
-        break;
-        
-      case 'SET_BATCH_DENSITY':
-        batch.density = action.value;
-        break;
-        
-      case 'SET_COATING_WEIGHT_GAIN':
-        coating.weightGain = action.value;
-        break;
-        
-      case 'SET_COATING_DENSITY':
-        coating.density = action.value;
-        break;
-        
-      case 'SET_COATING_PRODUCT_NAME':
-        coating.productName = action.value;
-        break;
-        
-      case 'SET_COATING_FORMULA':
-        coating.formula = action.value;
-        break;
-        
-      case 'SET_COATING_WEIGHT':
-        coating.coatingWeight = action.value;
-        break;
-        
-      case 'SET_COATING_COVERAGE':
-        coating.coatingCoverage = action.value;
-        break;
-    
-      case 'SET_MIXING_VESSEL_DIAMETER':
-        mixing.vesselDiameter = action.value;
-        break;
-      case 'SET_MIXING_VESSEL_HEIGHT':
-        mixing.vesselHeight = action.value;
-        break;
-      case 'SET_MIXING_BLADE_DIAMETER':
-        mixing.bladeDiameter = action.value;
-        break;
-      case 'SET_MIXING_VESSEL_NAME':
-        mixing.vesselName = action.value;
-        break;
-      case 'SET_MIXING_VESSEL_DESCRIPTION':
-        mixing.vesselDescription = action.value;
-        break;
-      case 'SET_MIXING_VESSEL_BOTTOM_TYPE':
-        mixing.vesselBottomType = action.value;
-        break;
-      case 'SET_MIXING_BLADE_TYPE':
-        mixing.bladeType = action.value;
-        break;
+        let newPan = new CoatingPan();
+        newPan.fillVolume = state.batch.volume;
+        newPan = Object.assign(newPan, action.value);
+        return Object.assign({}, state, {pan: newPan});
         
       default: 
         return state;
     }
     
-    // share properties amoung objects that are computed
-    batch.tabletSurfaceArea = coating.tabletArea = tablet.totalArea;
-    batch.tabletWeight = tablet.weight;
-    pan.fillVolume = batch.volume;  
-    
-    return Object.assign({}, {
-      pan: pan,
-      batch: batch,
-      tablet: tablet,
-      coating: coating,
-      mixing: mixing,
-      user: user
-    });
   };
   
-  const store = Redux.createStore(reducer);
+  const store = Redux.createStore(reducer); /*global Redux*/
   
   // Create the Polymer mixin
   window.CoatingDashboard = window.CoatingDashboard || {};
-  CoatingDashboard.ReduxMixin = PolymerRedux(store);
+  CoatingDashboard.ReduxMixin = PolymerRedux(store); /*global PolymerRedux CoatingDashboard*/
   
 </script>
